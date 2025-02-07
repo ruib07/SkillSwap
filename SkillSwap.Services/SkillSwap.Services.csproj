@@ -14,9 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SkillSwap.Entities\SkillSwap.Entities.csproj" />
   </ItemGroup>
 
 </Project>

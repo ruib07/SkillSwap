@@ -23,5 +23,7 @@ public class SkillsConfig : IEntityTypeConfiguration<Skills>
         builder.Property(p => p.UpdatedAt)
             .HasDefaultValueSql("GETUTCDATE()")
             .ValueGeneratedOnAddOrUpdate();
+
+        builder.HasIndex(p => p.Name).IsUnique();
     }
 }
