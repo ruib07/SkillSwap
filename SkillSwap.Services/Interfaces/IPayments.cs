@@ -5,7 +5,7 @@ namespace SkillSwap.Services.Interfaces;
 public interface IPayments
 {
     Task<Payments> GetPaymentById(Guid id);
-    Task<Payments> GetPaymentsByPayerId(Guid payerId);
-    Task<Payments> GetPaymentsByMentorId(Guid mentorId);
+    Task<List<Payments>> GetPaymentsByPayerId(Guid payerId);
+    Task<List<Payments>> GetPaymentsByMentorId(Guid mentorId);
     Task<Payments> SendPayment(Payments payment);
 }

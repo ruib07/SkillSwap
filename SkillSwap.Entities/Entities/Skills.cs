@@ -13,4 +13,6 @@ public class Skills
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime UpdatedAt { get; set; }
+
+    public ICollection<Users> Users { get; set; } = new List<Users>();
 }

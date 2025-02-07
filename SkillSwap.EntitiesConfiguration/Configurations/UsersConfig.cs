@@ -27,5 +27,9 @@ public class UsersConfig : IEntityTypeConfiguration<Users>
         builder.Property(p => p.UpdatedAt)
             .HasDefaultValueSql("GETUTCDATE()")
             .ValueGeneratedOnAddOrUpdate();
+
+        builder.HasMany(p => p.Skills)
+               .WithMany(p => p.Users)
+               .UsingEntity(p => p.ToTable("UserSkills"));
     }
 }
