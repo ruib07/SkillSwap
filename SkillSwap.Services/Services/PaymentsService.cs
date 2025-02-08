@@ -28,7 +28,7 @@ public class PaymentsService : IPayments
     public async Task<List<Payments>> GetPaymentsByPayerId(Guid payerId)
     {
         var paymentsByPayer = await _context.Payments.AsNoTracking()
-                               .Where(pm => pm.PayerId == payerId).ToListAsync();
+                              .Where(pm => pm.PayerId == payerId).ToListAsync();
 
         if (paymentsByPayer == null || paymentsByPayer.Count == 0)
             ErrorHelper.ThrowNotFoundException("No payments found to that payer.");

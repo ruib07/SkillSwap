@@ -20,6 +20,10 @@ builder.Services.AddScoped<ISessions, SessionsService>();
 builder.Services.AddScoped<IReviews, ReviewsService>();
 builder.Services.AddScoped<IPayments, PaymentsService>();
 
+builder.Services.AddAuthorizationBuilder()
+                .AddPolicy(ApiConstants.PolicyUser, policy => policy
+                .RequireRole(ApiConstants.PolicyUser));
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(ApiConstants.AllowLocalhost,
@@ -33,7 +37,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseExceptionHandler("/error");
 app.UseCors(ApiConstants.AllowLocalhost);
 app.UseAuthentication();
 app.UseAuthorization();

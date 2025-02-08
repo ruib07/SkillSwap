@@ -28,7 +28,7 @@ public class MentorshipRequestsService : IMentorshipRequests
     public async Task<List<MentorshipRequests>> GetMentorshipRequestsbyLearnerId(Guid learnerId)
     {
         var mentorshipRequestsByLearner = await _context.MentorshipRequests.AsNoTracking()
-                                 .Where(mr => mr.LearnerId == learnerId).ToListAsync();
+                                          .Where(mr => mr.LearnerId == learnerId).ToListAsync();
 
         if (mentorshipRequestsByLearner == null || mentorshipRequestsByLearner.Count == 0)
             ErrorHelper.ThrowNotFoundException("No mentorship requests found to that learner.");
@@ -39,7 +39,7 @@ public class MentorshipRequestsService : IMentorshipRequests
     public async Task<List<MentorshipRequests>> GetMentorshipRequestsbyMentorId(Guid mentorId)
     {
         var mentorshipRequestsByMentor = await _context.MentorshipRequests.AsNoTracking()
-                                .Where(mr => mr.MentorId == mentorId).ToListAsync();
+                                         .Where(mr => mr.MentorId == mentorId).ToListAsync();
 
         if (mentorshipRequestsByMentor == null || mentorshipRequestsByMentor.Count == 0)
             ErrorHelper.ThrowNotFoundException("No mentorship requests found to that mentor.");

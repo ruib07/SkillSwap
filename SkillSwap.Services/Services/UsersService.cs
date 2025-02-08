@@ -51,10 +51,8 @@ public class UsersService : IUsers
     public async Task<string> GeneratePasswordResetToken(string email)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-
         var token = Guid.NewGuid().ToString();
         var expiryDate = DateTime.UtcNow.AddHours(1);
-
         var passwordResetToken = new PasswordResetToken()
         {
             Id = Guid.NewGuid(),
@@ -74,10 +72,8 @@ public class UsersService : IUsers
         if (string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmNewPassword))
             ErrorHelper.ThrowBadRequestException("Password fields cannot be empty.");
 
-
         if (newPassword != confirmNewPassword) 
             ErrorHelper.ThrowBadRequestException("The password do not match.");
-
 
         var passwordResetToken = await _context.PasswordResetsToken.Include(prt => prt.User)
                                  .FirstOrDefaultAsync(prt => prt.Token == token && prt.ExpiryDate > DateTime.UtcNow);

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
-using SkillSwap.Server.Exceptions;
 using SkillSwap.Server.Models;
 using SkillSwap.Services.Interfaces;
 using static SkillSwap.Server.Models.RecoverPassword;
@@ -28,8 +27,6 @@ public class UsersController : ControllerBase
     {
         var user = await _users.GetUserById(userId);
 
-        if (user == null) return NotFound();
-
         return Ok(user);
     }
 
@@ -37,6 +34,8 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Users>> CreateUser([FromBody] Users user)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
         await _users.CreateUser(user);
 
         return StatusCode(StatusCodes.Status201Created, "User created successffully.");
@@ -44,35 +43,21 @@ public class UsersController : ControllerBase
 
     // POST users/recoverpassword
     [HttpPost("recoverpassword")]
-    public async Task<IActionResult> UserRecoverPassword([FromBody] RecoverPasswordRequest request)
+    public async Task<IActionResult> RecoverPasswordSendEmail([FromBody] RecoverPasswordRequest request)
     {
-        try
-        {
-            var token = await _users.GeneratePasswordResetToken(request.Email);
-            await _emailService.SendPasswordResetEmail(request.Email, token);
+        var token = await _users.GeneratePasswordResetToken(request.Email);
+        await _emailService.SendPasswordResetEmail(request.Email, token);
 
-            return Ok();
-        }
-        catch (Exception)
-        {
-            return BadRequest("Something went wrong.");
-        }
+        return Ok();
     }
 
     // PUT users/updatepassword
     [HttpPut("updatepassword")]
     public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordRequest request)
     {
-        try
-        {
-            await _users.UpdatePassword(request.Token, request.NewPassword, request.ConfirmNewPassword);
+        await _users.UpdatePassword(request.Token, request.NewPassword, request.ConfirmNewPassword);
 
-            return Ok();
-        }
-        catch (Exception)
-        {
-            return BadRequest("Something went wrong.");
-        }
+        return Ok();
     }
 
     // PUT users/{userId}
@@ -80,27 +65,14 @@ public class UsersController : ControllerBase
     [HttpPut("{userId}")]
     public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] Users updateUser)
     {
-        try
-        {
-            var updatedUser = await _users.UpdateUser(userId, updateUser);
-            return Ok(updatedUser);
-        }
-        catch (NotFoundException ex) 
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (ConflictException ex) 
-        {
-            return Conflict(new { message = ex.Message });
-        }
-        catch (Exception) 
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
-        }
+        var updatedUser = await _users.UpdateUser(userId, updateUser);
+
+        return Ok("User updated successfully.");
     }
 
 
     // PATCH users/{userId}/balance
+    [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpPatch("{userId}/balance")]
     public async Task<IActionResult> UpdateBalance(Guid userId, [FromBody] UpdateBalanceRequest request)
     {

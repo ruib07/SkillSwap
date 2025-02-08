@@ -40,8 +40,8 @@ public class ReviewsService : IReviews
     public async Task<List<Reviews>> GetReviewsByReviewerId(Guid reviewerId)
     {
         var reviewsByReviewer = await _context.Reviews.AsNoTracking()
-                               .Where(rb => rb.ReviewerId == reviewerId)
-                               .ToListAsync();
+                                .Where(rb => rb.ReviewerId == reviewerId)
+                                .ToListAsync();
 
         if (reviewsByReviewer == null || reviewsByReviewer.Count == 0)
             ErrorHelper.ThrowNotFoundException("No reviews for that reviewer.");
@@ -51,7 +51,8 @@ public class ReviewsService : IReviews
 
     public async Task<Reviews> CreateReview(Reviews review)
     {
-        if (review.Rating < 1 || review.Rating > 5) ErrorHelper.ThrowBadRequestException("Rating must be between 1 and 5.");
+        if (review.Rating < 1 || review.Rating > 5) 
+            ErrorHelper.ThrowBadRequestException("Rating must be between 1 and 5.");
 
         await _context.Reviews.AddAsync(review);
         await _context.SaveChangesAsync();
