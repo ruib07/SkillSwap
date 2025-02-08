@@ -9,6 +9,6 @@ public interface IUsers
     Task<string> GeneratePasswordResetToken(string email);
     Task UpdatePassword(string token, string newPassword, string confirmNewPassword);
     Task<Users> UpdateUser(Guid id, Users updateUser);
-    Task<Users> UpdateUserBalance(Guid id, decimal userBalance);
+    Task<Users> UpdateBalance(Guid id, decimal userBalance);
     Task DeleteUser(Guid id);
 }

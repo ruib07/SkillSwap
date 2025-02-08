@@ -113,7 +113,7 @@ public class UsersService : IUsers
         return currentUser;
     }
 
-    public async Task<Users> UpdateUserBalance(Guid id, decimal userBalance)
+    public async Task<Users> UpdateBalance(Guid id, decimal userBalance)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
