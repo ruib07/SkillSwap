@@ -7,7 +7,7 @@ using SkillSwap.Services.Interfaces;
 
 namespace SkillSwap.Server.Controllers;
 
-[Route("userskills")]
+[Route("user-skills")]
 [ApiController]
 public class UserSkillsController : ControllerBase
 {
@@ -18,7 +18,7 @@ public class UserSkillsController : ControllerBase
         _userSkills = userSkills;
     }
 
-    // GET userskills/byuser/{userId}
+    // GET user-skills/byuser/{userId}
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpGet("byuser/{userId}")]
     public async Task<ActionResult<List<Skills>>> GetUserSkillsByUser(Guid userId)
@@ -28,7 +28,7 @@ public class UserSkillsController : ControllerBase
         return Ok(userSkills);
     }
 
-    // POST userskills
+    // POST user-skills
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpPost]
     public async Task<IActionResult> CreateUserSkill([FromBody] UserSkillDto userSkillDto)
@@ -40,7 +40,7 @@ public class UserSkillsController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, "User skill created successfully.");
     }
 
-    // DELETE userskills/{userId}/{skillId}
+    // DELETE user-skills/{userId}/{skillId}
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpDelete("{userId}/{skillId}")]
     public async Task<IActionResult> DeleteUserSkill(Guid userId, Guid skillId)

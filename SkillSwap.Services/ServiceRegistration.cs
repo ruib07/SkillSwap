@@ -14,10 +14,11 @@ public static class ServiceRegistration
         {
             typeof(UsersService),
             typeof(SkillsService),
+            typeof(UserSkillsService),
             typeof(MentorshipRequestsService),
             typeof(SessionsService),
             typeof(ReviewsService),
-            typeof(PaymentsService),
+            typeof(PaymentsService)
         };
 
         foreach (var serviceType in serviceAssemblies)

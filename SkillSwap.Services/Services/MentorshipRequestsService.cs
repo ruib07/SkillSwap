@@ -9,6 +9,7 @@ namespace SkillSwap.Services.Services;
 public class MentorshipRequestsService : IMentorshipRequests
 {
     private readonly SkillSwapDbContext _context;
+    private DbSet<MentorshipRequests> MentorshipRequests => _context.MentorshipRequests;
 
     public MentorshipRequestsService(SkillSwapDbContext context)
     {
@@ -17,8 +18,7 @@ public class MentorshipRequestsService : IMentorshipRequests
 
     public async Task<MentorshipRequests> GetMentorshipRequestById(Guid id)
     {
-        var mentorshipRequest = await _context.MentorshipRequests.AsNoTracking()
-                                .FirstOrDefaultAsync(mr => mr.Id == id);
+        var mentorshipRequest = await MentorshipRequests.FirstOrDefaultAsync(mr => mr.Id == id);
 
         if (mentorshipRequest == null) ErrorHelper.ThrowNotFoundException("Mentorship Request not found.");
 
@@ -27,8 +27,7 @@ public class MentorshipRequestsService : IMentorshipRequests
 
     public async Task<List<MentorshipRequests>> GetMentorshipRequestsbyLearnerId(Guid learnerId)
     {
-        var mentorshipRequestsByLearner = await _context.MentorshipRequests.AsNoTracking()
-                                          .Where(mr => mr.LearnerId == learnerId).ToListAsync();
+        var mentorshipRequestsByLearner = await MentorshipRequests.Where(mr => mr.LearnerId == learnerId).ToListAsync();
 
         if (mentorshipRequestsByLearner == null || mentorshipRequestsByLearner.Count == 0)
             ErrorHelper.ThrowNotFoundException("No mentorship requests found to that learner.");
@@ -38,8 +37,7 @@ public class MentorshipRequestsService : IMentorshipRequests
 
     public async Task<List<MentorshipRequests>> GetMentorshipRequestsbyMentorId(Guid mentorId)
     {
-        var mentorshipRequestsByMentor = await _context.MentorshipRequests.AsNoTracking()
-                                         .Where(mr => mr.MentorId == mentorId).ToListAsync();
+        var mentorshipRequestsByMentor = await MentorshipRequests.AsNoTracking().Where(mr => mr.MentorId == mentorId).ToListAsync();
 
         if (mentorshipRequestsByMentor == null || mentorshipRequestsByMentor.Count == 0)
             ErrorHelper.ThrowNotFoundException("No mentorship requests found to that mentor.");
@@ -49,7 +47,7 @@ public class MentorshipRequestsService : IMentorshipRequests
 
     public async Task<MentorshipRequests> CreateMentorshipRequest(MentorshipRequests mentorshipRequest)
     {
-        await _context.MentorshipRequests.AddAsync(mentorshipRequest);
+        await MentorshipRequests.AddAsync(mentorshipRequest);
         await _context.SaveChangesAsync();
 
         return mentorshipRequest;
@@ -57,9 +55,7 @@ public class MentorshipRequestsService : IMentorshipRequests
 
     public async Task<MentorshipRequests> UpdateMentorshipRequest(Guid id, MentorshipRequests updateMentorshipRequest)
     {
-        var currentMentorshipRequest = await _context.MentorshipRequests.FirstOrDefaultAsync(cmr => cmr.Id == id);
-
-        if (currentMentorshipRequest == null) ErrorHelper.ThrowNotFoundException("Mentorship request not found.");
+        var currentMentorshipRequest = await GetMentorshipRequestById(id);
 
         currentMentorshipRequest.Status = updateMentorshipRequest.Status;
         currentMentorshipRequest.ScheduledAt = updateMentorshipRequest.ScheduledAt;
@@ -71,11 +67,9 @@ public class MentorshipRequestsService : IMentorshipRequests
 
     public async Task DeleteMentorshipRequest(Guid id)
     {
-        var deleteMentorshipRequest = await _context.MentorshipRequests.FirstOrDefaultAsync(dmr => dmr.Id == id);
+        var deleteMentorshipRequest = await GetMentorshipRequestById(id);
 
-        if (deleteMentorshipRequest == null) ErrorHelper.ThrowNotFoundException("Mentorship request not found.");
-
-        _context.MentorshipRequests.Remove(deleteMentorshipRequest);
+        MentorshipRequests.Remove(deleteMentorshipRequest);
         await _context.SaveChangesAsync();
     }
 }

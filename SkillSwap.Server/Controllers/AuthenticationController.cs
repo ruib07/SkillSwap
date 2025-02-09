@@ -31,13 +31,13 @@ public class AuthenticationController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody, Required] LoginRequest loginRequest)
     {
-        if (loginRequest == null)
-            return BadRequest("Username and password are mandatory.");
+        if (loginRequest == null) return BadRequest("Email and password are mandatory.");
+        if (string.IsNullOrWhiteSpace(loginRequest.Email)) return BadRequest("Email is required.");
+        if (string.IsNullOrWhiteSpace(loginRequest.Password)) return BadRequest("Password is required.");
 
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginRequest.Email);
 
-        if (user == null) return Unauthorized("User not found!");
-
+        if (user == null) return Unauthorized("User not found.");
         if (!VerifyPassword(loginRequest.Password, user.Password)) return Unauthorized("Incorrect password!");
 
         var claims = new List<Claim>()

@@ -9,6 +9,8 @@ namespace SkillSwap.Services.Services;
 public class UserSkillsService : IUserSkills
 {
     private readonly SkillSwapDbContext _context;
+    private DbSet<Users> Users => _context.Users;
+    private DbSet<Skills> Skills => _context.Skills;
 
     public UserSkillsService(SkillSwapDbContext context)
     {
@@ -17,7 +19,7 @@ public class UserSkillsService : IUserSkills
 
     public async Task<List<Skills>> GetUserSkillsByUser(Guid userId)
     {
-        var user = await _context.Users.AsNoTracking().Include(u => u.Skills)
+        var user = await Users.AsNoTracking().Include(u => u.Skills)
                    .FirstOrDefaultAsync(u => u.Id == userId);
 
         return user?.Skills.ToList() ?? new List<Skills>();
@@ -25,8 +27,8 @@ public class UserSkillsService : IUserSkills
 
     public async Task CreateUserSkill(Guid userId, Guid skillId)
     {
-        var user = await _context.Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
-        var skill = await _context.Skills.FirstOrDefaultAsync(s => s.Id == skillId);
+        var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
+        var skill = await Skills.FirstOrDefaultAsync(s => s.Id == skillId);
 
         if (user == null) ErrorHelper.ThrowNotFoundException("User not found.");
         if (skill == null) ErrorHelper.ThrowNotFoundException("Skill not found.");
@@ -38,7 +40,7 @@ public class UserSkillsService : IUserSkills
 
     public async Task DeleteUserSkill(Guid userId, Guid skillId)
     {
-        var user = await _context.Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
 
         if (user == null) ErrorHelper.ThrowNotFoundException("User not found.");
 

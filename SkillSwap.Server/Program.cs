@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using SkillSwap.Server.Configurations;
 using SkillSwap.Server.Constants;
 using SkillSwap.Services;
@@ -7,7 +8,10 @@ using SkillSwap.Services.Services;
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
 builder.Services.AddCustomApiSecurity(configuration);
 builder.Services.AddCustomServiceDependencyRegister(configuration);
 builder.Services.AddCustomDatabaseConfiguration(configuration);

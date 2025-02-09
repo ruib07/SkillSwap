@@ -56,7 +56,7 @@ public class MentorshipRequestsController : ControllerBase
 
         await _mentorshipRequests.CreateMentorshipRequest(mentorshipRequest);
 
-        return StatusCode(StatusCodes.Status201Created, "Mentorship request created successffully.");
+        return StatusCode(StatusCodes.Status201Created, "Mentorship request created successfully.");
     }
 
     // PUT mentorshiprequests/{mentorshiprequestId}
@@ -66,7 +66,7 @@ public class MentorshipRequestsController : ControllerBase
     {
         var updatedMentorshipReq = await _mentorshipRequests.UpdateMentorshipRequest(mentorshiprequestId, updateMentorshipRequest);
 
-        return Ok(updatedMentorshipReq);
+        return Ok("Mentorship request updated successfully.");
     }
 
     // DELETE mentorshiprequests/{mentorshiprequestId}

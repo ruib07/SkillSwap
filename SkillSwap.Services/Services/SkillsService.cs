@@ -9,6 +9,7 @@ namespace SkillSwap.Services.Services;
 public class SkillsService : ISkills
 {
     private readonly SkillSwapDbContext _context;
+    private DbSet<Skills> Skills => _context.Skills;
 
     public SkillsService(SkillSwapDbContext context)
     {
@@ -17,13 +18,12 @@ public class SkillsService : ISkills
 
     public async Task<List<Skills>> GetAllSkills()
     {
-        return await _context.Skills.AsNoTracking().ToListAsync();
+        return await Skills.AsNoTracking().ToListAsync();
     }
 
     public async Task<Skills> GetSkillById(Guid id)
     {
-        var skill = await _context.Skills.AsNoTracking()
-                    .FirstOrDefaultAsync(s => s.Id == id);
+        var skill = await Skills.FirstOrDefaultAsync(s => s.Id == id);
 
         if (skill == null) ErrorHelper.ThrowNotFoundException("Skill not found.");
 
@@ -32,14 +32,12 @@ public class SkillsService : ISkills
 
     public async Task<Skills> CreateSkill(Skills skill)
     {
-        var existingSkillName = await _context.Skills.FirstOrDefaultAsync(esn => esn.Name == skill.Name);
+        await EnsureSkillNameIsUnique(skill.Name);
 
         if (string.IsNullOrEmpty(skill.Name) || string.IsNullOrEmpty(skill.Description))
             ErrorHelper.ThrowBadRequestException("Name and description are required.");
 
-        if (existingSkillName != null) ErrorHelper.ThrowConflictException("Skill Name already exists.");
-
-        await _context.Skills.AddAsync(skill);
+        await Skills.AddAsync(skill);
         await _context.SaveChangesAsync();
 
         return skill;
@@ -47,13 +45,9 @@ public class SkillsService : ISkills
 
     public async Task<Skills> UpdateSkill(Guid id, Skills updateSkill)
     {
-        var currentSkill = await _context.Skills.FirstOrDefaultAsync(cs => cs.Id == id);
+        var currentSkill = await GetSkillById(id);
 
-        if (currentSkill == null) ErrorHelper.ThrowNotFoundException("Skill not found.");
-
-        var existingSkillName = await _context.Skills.FirstOrDefaultAsync(esn => esn.Name == updateSkill.Name);
-
-        if (existingSkillName != null) ErrorHelper.ThrowConflictException("Skill Name already exists.");
+        await EnsureSkillNameIsUnique(updateSkill.Name, id);
 
         currentSkill.Name = updateSkill.Name;
         currentSkill.Description = updateSkill.Description;
@@ -65,11 +59,20 @@ public class SkillsService : ISkills
 
     public async Task DeleteSkill(Guid id)
     {
-        var deleteSkill = await _context.Skills.FirstOrDefaultAsync(ds => ds.Id == id);
+        var deleteSkill = await GetSkillById(id);
 
-        if (deleteSkill == null) ErrorHelper.ThrowNotFoundException("Skill not found.");
-
-        _context.Skills.Remove(deleteSkill);
+        Skills.Remove(deleteSkill);
         await _context.SaveChangesAsync();
     }
+
+    #region Private Methods
+
+    private async Task EnsureSkillNameIsUnique(string name, Guid? updatingSkillId = null)
+    {
+        bool skillExists = await Skills.AnyAsync(s => s.Name == name && (!updatingSkillId.HasValue || s.Id != updatingSkillId));
+
+        if (skillExists) ErrorHelper.ThrowConflictException("Skill Name already exists.");
+    }
+
+    #endregion
 }

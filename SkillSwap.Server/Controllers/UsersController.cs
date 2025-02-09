@@ -38,7 +38,7 @@ public class UsersController : ControllerBase
 
         await _users.CreateUser(user);
 
-        return StatusCode(StatusCodes.Status201Created, "User created successffully.");
+        return StatusCode(StatusCodes.Status201Created, "User created successfully.");
     }
 
     // POST users/recoverpassword

@@ -9,6 +9,7 @@ namespace SkillSwap.Services.Services;
 public class ReviewsService : IReviews
 {
     private readonly SkillSwapDbContext _context;
+    private DbSet<Reviews> Reviews => _context.Reviews;
 
     public ReviewsService(SkillSwapDbContext context)
     {
@@ -17,8 +18,7 @@ public class ReviewsService : IReviews
 
     public async Task<Reviews> GetReviewById(Guid id)
     {
-        var review = await _context.Reviews.AsNoTracking()
-                     .FirstOrDefaultAsync(r => r.Id == id);
+        var review = await Reviews.FirstOrDefaultAsync(r => r.Id == id);
 
         if (review == null) ErrorHelper.ThrowNotFoundException("Review not found.");
 
@@ -27,7 +27,7 @@ public class ReviewsService : IReviews
 
     public async Task<List<Reviews>> GetReviewBySessionId(Guid sessionId)
     {
-        var reviewsBySession = await _context.Reviews.AsNoTracking()
+        var reviewsBySession = await Reviews.AsNoTracking()
                                .Where(rb => rb.SessionId == sessionId)
                                .ToListAsync();
 
@@ -39,7 +39,7 @@ public class ReviewsService : IReviews
 
     public async Task<List<Reviews>> GetReviewsByReviewerId(Guid reviewerId)
     {
-        var reviewsByReviewer = await _context.Reviews.AsNoTracking()
+        var reviewsByReviewer = await Reviews.AsNoTracking()
                                 .Where(rb => rb.ReviewerId == reviewerId)
                                 .ToListAsync();
 
@@ -54,7 +54,7 @@ public class ReviewsService : IReviews
         if (review.Rating < 1 || review.Rating > 5) 
             ErrorHelper.ThrowBadRequestException("Rating must be between 1 and 5.");
 
-        await _context.Reviews.AddAsync(review);
+        await Reviews.AddAsync(review);
         await _context.SaveChangesAsync();
 
         return review;
@@ -62,11 +62,9 @@ public class ReviewsService : IReviews
 
     public async Task DeleteReview(Guid id)
     {
-        var deleteReview = await _context.Reviews.FirstOrDefaultAsync(dr => dr.Id == id);
+        var deleteReview = await GetReviewById(id);
 
-        if (deleteReview == null) ErrorHelper.ThrowNotFoundException("Review not found.");
-
-        _context.Reviews.Remove(deleteReview);
+        Reviews.Remove(deleteReview);
         await _context.SaveChangesAsync();
     }
 }

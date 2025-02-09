@@ -46,7 +46,7 @@ public class SessionsController : ControllerBase
 
         await _sessions.CreateSession(session);
 
-        return StatusCode(StatusCodes.Status201Created, "Session created successffully.");
+        return StatusCode(StatusCodes.Status201Created, "Session created successfully.");
     }
 
     // PUT sessions/{sessionId}
@@ -56,7 +56,7 @@ public class SessionsController : ControllerBase
     {
         var updatedSession = await _sessions.UpdateSession(sessionId, updateSession);
 
-        return Ok(updatedSession);
+        return Ok("Session updated successfully.");
     }
 
     // DELETE sessions/{sessionId}

@@ -44,7 +44,7 @@ public class SkillsController : ControllerBase
 
         await _skills.CreateSkill(skill);
 
-        return StatusCode(StatusCodes.Status201Created, "Skill created successffully.");
+        return StatusCode(StatusCodes.Status201Created, "Skill created successfully.");
     }
 
     // PUT skills/{skillId}
@@ -54,7 +54,7 @@ public class SkillsController : ControllerBase
     {
         var updatedSkill = await _skills.UpdateSkill(skillId, updateSkill);
 
-        return Ok(updatedSkill);
+        return Ok("Skill updated successfully.");
     }
 
     // DELETE skills/{skillId}

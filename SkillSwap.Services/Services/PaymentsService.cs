@@ -9,6 +9,7 @@ namespace SkillSwap.Services.Services;
 public class PaymentsService : IPayments
 {
     private readonly SkillSwapDbContext _context;
+    private DbSet<Payments> Payments => _context.Payments;
 
     public PaymentsService(SkillSwapDbContext context)
     {
@@ -17,8 +18,7 @@ public class PaymentsService : IPayments
 
     public async Task<Payments> GetPaymentById(Guid id)
     {
-        var payment = await _context.Payments.AsNoTracking()
-                      .FirstOrDefaultAsync(p => p.Id == id);
+        var payment = await Payments.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
 
         if (payment == null) ErrorHelper.ThrowNotFoundException("Payment not found.");
 
@@ -27,8 +27,7 @@ public class PaymentsService : IPayments
 
     public async Task<List<Payments>> GetPaymentsByPayerId(Guid payerId)
     {
-        var paymentsByPayer = await _context.Payments.AsNoTracking()
-                              .Where(pm => pm.PayerId == payerId).ToListAsync();
+        var paymentsByPayer = await Payments.AsNoTracking().Where(pm => pm.PayerId == payerId).ToListAsync();
 
         if (paymentsByPayer == null || paymentsByPayer.Count == 0)
             ErrorHelper.ThrowNotFoundException("No payments found to that payer.");
@@ -38,8 +37,7 @@ public class PaymentsService : IPayments
 
     public async Task<List<Payments>> GetPaymentsByMentorId(Guid mentorId)
     {
-        var paymentsByMentor = await _context.Payments.AsNoTracking()
-                               .Where(pm => pm.MentorId == mentorId).ToListAsync();
+        var paymentsByMentor = await Payments.AsNoTracking().Where(pm => pm.MentorId == mentorId).ToListAsync();
 
         if (paymentsByMentor == null || paymentsByMentor.Count == 0) 
             ErrorHelper.ThrowNotFoundException("No payments found to that mentor.");
@@ -49,10 +47,9 @@ public class PaymentsService : IPayments
 
     public async Task<Payments> SendPayment(Payments payment)
     {
-        if (payment.Amount <= 0)
-            ErrorHelper.ThrowBadRequestException("Amount must be a positive number greater than zero.");
+        if (payment.Amount <= 0) ErrorHelper.ThrowBadRequestException("Amount must be a positive number greater than zero.");
 
-        await _context.Payments.AddAsync(payment);
+        await Payments.AddAsync(payment);
         await _context.SaveChangesAsync();
 
         return payment;
