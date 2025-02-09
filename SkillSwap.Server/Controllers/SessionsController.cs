@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
 using SkillSwap.Services.Interfaces;
+using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
 
@@ -17,12 +18,12 @@ public class SessionsController : ControllerBase
         _sessions = sessions;
     }
 
-    // GET sessions/{sessionId}
+    // GET sessions/{id}
     [Authorize(Policy = ApiConstants.PolicyUser)]
-    [HttpGet("{sessionId}")]
-    public async Task<IActionResult> GetSessionById(Guid sessionId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetSessionById(Guid id)
     {
-        var session = await _sessions.GetSessionById(sessionId);
+        var session = await _sessions.GetSessionById(id);
 
         return Ok(session);
     }
@@ -46,7 +47,11 @@ public class SessionsController : ControllerBase
 
         await _sessions.CreateSession(session);
 
-        return StatusCode(StatusCodes.Status201Created, "Session created successfully.");
+        return CreatedAtAction(nameof(GetSessionById), new { id = session.Id }, new CreationResponse()
+        {
+            Message = "Session created successfully.",
+            Id = session.Id
+        });
     }
 
     // PUT sessions/{sessionId}

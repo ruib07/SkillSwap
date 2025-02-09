@@ -54,16 +54,20 @@ public class UsersService : IUsers
         var user = await Users.FirstOrDefaultAsync(u => u.Email == email);
         var token = Guid.NewGuid().ToString();
         var expiryDate = DateTime.UtcNow.AddHours(1);
-        var passwordResetToken = new PasswordResetToken()
-        {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,
-            Token = token,
-            ExpiryDate = expiryDate
-        };
 
-        await PasswordResetToken.AddAsync(passwordResetToken);
-        await _context.SaveChangesAsync();
+        if (user != null)
+        {
+            var passwordResetToken = new PasswordResetToken()
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = token,
+                ExpiryDate = expiryDate
+            };
+
+            await PasswordResetToken.AddAsync(passwordResetToken);
+            await _context.SaveChangesAsync();
+        }
 
         return token;
     }
@@ -74,7 +78,7 @@ public class UsersService : IUsers
             ErrorHelper.ThrowBadRequestException("Password fields cannot be empty.");
 
         if (newPassword != confirmNewPassword) 
-            ErrorHelper.ThrowBadRequestException("The password do not match.");
+            ErrorHelper.ThrowBadRequestException("Passwords do not match.");
 
         var passwordResetToken = await PasswordResetToken.Include(prt => prt.User)
                                  .FirstOrDefaultAsync(prt => prt.Token == token && prt.ExpiryDate > DateTime.UtcNow);

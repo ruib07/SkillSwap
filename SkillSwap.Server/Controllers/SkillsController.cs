@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
 using SkillSwap.Services.Interfaces;
+using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
 
@@ -26,11 +27,11 @@ public class SkillsController : ControllerBase
         return Ok(skills);
     }
 
-    // GET skills/{skillId}
-    [HttpGet("{skillId}")]
-    public async Task<IActionResult> GetSkillById(Guid skillId)
+    // GET skills/{id}
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetSkillById(Guid id)
     {
-        var skill = await _skills.GetSkillById(skillId);
+        var skill = await _skills.GetSkillById(id);
 
         return Ok(skill);
     }
@@ -44,7 +45,11 @@ public class SkillsController : ControllerBase
 
         await _skills.CreateSkill(skill);
 
-        return StatusCode(StatusCodes.Status201Created, "Skill created successfully.");
+        return CreatedAtAction(nameof(GetSkillById), new { id = skill.Id }, new CreationResponse()
+        {
+            Message = "Skill created successfully.",
+            Id = skill.Id
+        });
     }
 
     // PUT skills/{skillId}

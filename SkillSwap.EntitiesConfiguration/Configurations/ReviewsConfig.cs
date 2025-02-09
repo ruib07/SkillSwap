@@ -18,14 +18,14 @@ public class ReviewsConfig : IEntityTypeConfiguration<Reviews>
         builder.Property(p => p.Comments).HasColumnType("varchar(MAX)");
 
         builder.HasOne(p => p.Session)
-            .WithMany()
-            .HasForeignKey(p => p.SessionId)
-            .OnDelete(DeleteBehavior.Cascade);
+               .WithMany()
+               .HasForeignKey(p => p.SessionId)
+               .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(p => p.Reviewer)
-           .WithMany()
-           .HasForeignKey(p => p.ReviewerId)
-           .OnDelete(DeleteBehavior.Restrict);
+               .WithMany()
+               .HasForeignKey(p => p.ReviewerId)
+               .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(p => p.CreatedAt)
                .HasDefaultValueSql("GETUTCDATE()")

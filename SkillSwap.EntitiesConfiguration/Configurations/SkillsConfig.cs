@@ -21,8 +21,8 @@ public class SkillsConfig : IEntityTypeConfiguration<Skills>
                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         builder.Property(p => p.UpdatedAt)
-            .HasDefaultValueSql("GETUTCDATE()")
-            .ValueGeneratedOnAddOrUpdate();
+               .HasDefaultValueSql("GETUTCDATE()")
+               .ValueGeneratedOnAddOrUpdate();
 
         builder.HasIndex(p => p.Name).IsUnique();
     }

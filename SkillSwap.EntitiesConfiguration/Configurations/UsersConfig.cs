@@ -20,13 +20,13 @@ public class UsersConfig : IEntityTypeConfiguration<Users>
         builder.Property(p => p.Balance).HasColumnType("decimal(10, 2)");
 
         builder.Property(p => p.CreatedAt)
-                .HasDefaultValueSql("GETUTCDATE()")
-                .ValueGeneratedOnAdd()
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+               .HasDefaultValueSql("GETUTCDATE()")
+               .ValueGeneratedOnAdd()
+               .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         builder.Property(p => p.UpdatedAt)
-            .HasDefaultValueSql("GETUTCDATE()")
-            .ValueGeneratedOnAddOrUpdate();
+               .HasDefaultValueSql("GETUTCDATE()")
+               .ValueGeneratedOnAddOrUpdate();
 
         builder.HasMany(p => p.Skills)
                .WithMany(p => p.Users)

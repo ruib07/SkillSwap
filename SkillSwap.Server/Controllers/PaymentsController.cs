@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
 using SkillSwap.Services.Interfaces;
+using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
 
@@ -17,12 +18,12 @@ public class PaymentsController : ControllerBase
         _payments = payments;
     }
 
-    // GET payments/{paymentId}
+    // GET payments/{id}
     [Authorize(Policy = ApiConstants.PolicyUser)]
-    [HttpGet("{paymentId}")]
-    public async Task<IActionResult> GetPaymentById(Guid paymentId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPaymentById(Guid id)
     {
-        var payment = await _payments.GetPaymentById(paymentId);
+        var payment = await _payments.GetPaymentById(id);
 
         return Ok(payment);
     }
@@ -56,6 +57,10 @@ public class PaymentsController : ControllerBase
 
         await _payments.SendPayment(payment);
 
-        return StatusCode(StatusCodes.Status201Created, "Payment created successffully.");
+        return CreatedAtAction(nameof(GetPaymentById), new { id = payment.Id }, new CreationResponse()
+        {
+            Message = "Payment created successfully.",
+            Id = payment.Id
+        });
     }
 }

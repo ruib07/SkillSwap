@@ -19,14 +19,14 @@ public class MentorshipRequestsConfig : IEntityTypeConfiguration<MentorshipReque
         builder.Property(p => p.ScheduledAt).IsRequired();
 
         builder.HasOne(p => p.Mentor)
-              .WithMany()
-              .HasForeignKey(p => p.MentorId)
-              .OnDelete(DeleteBehavior.Restrict);
+               .WithMany()
+               .HasForeignKey(p => p.MentorId)
+               .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(p => p.Learner)
-              .WithMany()
-              .HasForeignKey(p => p.LearnerId)
-              .OnDelete(DeleteBehavior.Cascade);
+               .WithMany()
+               .HasForeignKey(p => p.LearnerId)
+               .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(p => p.Skill)
                .WithMany()
@@ -34,8 +34,8 @@ public class MentorshipRequestsConfig : IEntityTypeConfiguration<MentorshipReque
                .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(p => p.CreatedAt)
-              .HasDefaultValueSql("GETUTCDATE()")
-              .ValueGeneratedOnAdd()
-              .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+               .HasDefaultValueSql("GETUTCDATE()")
+               .ValueGeneratedOnAdd()
+               .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
     }
 }

@@ -5,6 +5,7 @@ using SkillSwap.Server.Constants;
 using SkillSwap.Server.Models;
 using SkillSwap.Services.Interfaces;
 using static SkillSwap.Server.Models.RecoverPassword;
+using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
 
@@ -21,11 +22,11 @@ public class UsersController : ControllerBase
         _emailService = emailService;
     }
 
-    // GET users/{userId}
-    [HttpGet("{userId}")]
-    public async Task<IActionResult> GetUserById(Guid userId)
+    // GET users/{id}
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserById(Guid id)
     {
-        var user = await _users.GetUserById(userId);
+        var user = await _users.GetUserById(id);
 
         return Ok(user);
     }
@@ -38,7 +39,11 @@ public class UsersController : ControllerBase
 
         await _users.CreateUser(user);
 
-        return StatusCode(StatusCodes.Status201Created, "User created successfully.");
+        return CreatedAtAction(nameof(GetUserById), new {id = user.Id}, new CreationResponse()
+        {
+            Message = "User created successfully.",
+            Id = user.Id
+        });
     }
 
     // POST users/recoverpassword
@@ -65,7 +70,7 @@ public class UsersController : ControllerBase
     [HttpPut("{userId}")]
     public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] Users updateUser)
     {
-        var updatedUser = await _users.UpdateUser(userId, updateUser);
+        await _users.UpdateUser(userId, updateUser);
 
         return Ok("User updated successfully.");
     }

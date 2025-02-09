@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
 using SkillSwap.Services.Interfaces;
+using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
 
@@ -17,12 +18,12 @@ public class ReviewsController : ControllerBase
         _reviews = reviews;
     }
 
-    // GET reviews/{reviewId}
+    // GET reviews/{id}
     [Authorize(Policy = ApiConstants.PolicyUser)]
-    [HttpGet("{reviewId}")]
-    public async Task<IActionResult> GetReviewById(Guid reviewId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetReviewById(Guid id)
     {
-        var review = await _reviews.GetReviewById(reviewId);
+        var review = await _reviews.GetReviewById(id);
 
         return Ok(review);
     }
@@ -56,7 +57,11 @@ public class ReviewsController : ControllerBase
 
         await _reviews.CreateReview(review);
 
-        return StatusCode(StatusCodes.Status201Created, "Review created successffully.");
+        return CreatedAtAction(nameof(GetReviewById), new { id = review.Id }, new CreationResponse()
+        {
+            Message = "Review created successfully.",
+            Id = review.Id
+        });
     }
 
     // DELETE reviews/{reviewId}

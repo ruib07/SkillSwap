@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
 using SkillSwap.Services.Interfaces;
+using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
 
-[Route("mentorshiprequests")]
+[Route("mentorship-requests")]
 [ApiController]
 public class MentorshipRequestsController : ControllerBase
 {
@@ -17,17 +18,17 @@ public class MentorshipRequestsController : ControllerBase
         _mentorshipRequests = mentorshipRequests;
     }
 
-    // GET mentorshiprequests/{mentorshiprequestId}
+    // GET mentorship-requests/{id}
     [Authorize(Policy = ApiConstants.PolicyUser)]
-    [HttpGet("{mentorshiprequestId}")]
-    public async Task<IActionResult> GetMentorshipRequestById(Guid mentorshiprequestId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetMentorshipRequestById(Guid id)
     {
-        var mentorshipReq = await _mentorshipRequests.GetMentorshipRequestById(mentorshiprequestId);
+        var mentorshipReq = await _mentorshipRequests.GetMentorshipRequestById(id);
 
         return Ok(mentorshipReq);
     }
 
-    // GET mentorshiprequests/bylearner/{learnerId}
+    // GET mentorship-requests/bylearner/{learnerId}
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpGet("bylearner/{learnerId}")]
     public async Task<ActionResult<List<MentorshipRequests>>> GetMentorshipRequestsbyLearnerId(Guid learnerId)
@@ -37,7 +38,7 @@ public class MentorshipRequestsController : ControllerBase
         return Ok(mentorshipReqsByLearner);
     }
 
-    // GET mentorshiprequests/bymentor/{mentorId}
+    // GET mentorship-requests/bymentor/{mentorId}
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpGet("bymentor/{mentorId}")]
     public async Task<ActionResult<List<MentorshipRequests>>> GetMentorshipRequestsbyMentorId(Guid mentorId)
@@ -47,7 +48,7 @@ public class MentorshipRequestsController : ControllerBase
         return Ok(mentorshipReqsByMentor);
     }
 
-    // POST mentorshiprequests
+    // POST mentorship-requests
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpPost]
     public async Task<ActionResult<MentorshipRequests>> CreateMentorshipRequest([FromBody] MentorshipRequests mentorshipRequest)
@@ -56,10 +57,14 @@ public class MentorshipRequestsController : ControllerBase
 
         await _mentorshipRequests.CreateMentorshipRequest(mentorshipRequest);
 
-        return StatusCode(StatusCodes.Status201Created, "Mentorship request created successfully.");
+        return CreatedAtAction(nameof(GetMentorshipRequestById), new { id = mentorshipRequest.Id }, new CreationResponse()
+        {
+            Message = "Mentorship request created successfully.",
+            Id = mentorshipRequest.Id
+        });
     }
 
-    // PUT mentorshiprequests/{mentorshiprequestId}
+    // PUT mentorship-requests/{mentorshiprequestId}
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpPut("{mentorshiprequestId}")]
     public async Task<IActionResult> UpdateSkill(Guid mentorshiprequestId, [FromBody] MentorshipRequests updateMentorshipRequest)
@@ -69,7 +74,7 @@ public class MentorshipRequestsController : ControllerBase
         return Ok("Mentorship request updated successfully.");
     }
 
-    // DELETE mentorshiprequests/{mentorshiprequestId}
+    // DELETE mentorship-requests/{mentorshiprequestId}
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpDelete("{mentorshiprequestId}")]
     public async Task<IActionResult> DeleteSkill(Guid mentorshiprequestId)

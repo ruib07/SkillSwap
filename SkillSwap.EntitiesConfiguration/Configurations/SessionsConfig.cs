@@ -28,7 +28,7 @@ public class SessionsConfig : IEntityTypeConfiguration<Sessions>
                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         builder.Property(p => p.UpdatedAt)
-            .HasDefaultValueSql("GETUTCDATE()")
-            .ValueGeneratedOnAddOrUpdate();
+               .HasDefaultValueSql("GETUTCDATE()")
+               .ValueGeneratedOnAddOrUpdate();
     }
 }

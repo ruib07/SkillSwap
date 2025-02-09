@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using SkillSwap.Server.Configurations;
 using SkillSwap.Server.Constants;
+using SkillSwap.Server.Middlewares;
 using SkillSwap.Services;
 using SkillSwap.Services.Interfaces;
 using SkillSwap.Services.Services;
@@ -41,6 +42,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseCors(ApiConstants.AllowLocalhost);
 app.UseAuthentication();
 app.UseAuthorization();
