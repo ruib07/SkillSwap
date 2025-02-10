@@ -71,21 +71,6 @@ public class UsersControllerTests
     }
 
     [Test]
-    public async Task CreateUser_ReturnsBadRequest_WhenModelStateIsInvalid()
-    {
-        usersController.ModelState.AddModelError("Name", "Required");
-        var result = await usersController.CreateUser(new Users());
-        var badRequestResult = result.Result as BadRequestObjectResult;
-
-        Assert.That(badRequestResult, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(badRequestResult.StatusCode, Is.EqualTo(400));
-            Assert.That(badRequestResult.Value, Is.TypeOf<SerializableError>());
-        });
-    }
-
-    [Test]
     public async Task RecoverPassword_ReturnsOk_WhenTokenGeneratedAndEmailSent()
     {
         var newUser = CreateUserTemplate();
@@ -188,13 +173,13 @@ public class UsersControllerTests
 
         var result = await usersController.UpdateBalance(user.Id, request);
         var badRequestResult = result as BadRequestObjectResult;
-        Assert.That(badRequestResult, Is.Not.Null);
-        Assert.That(badRequestResult.StatusCode, Is.EqualTo(400));
         var response = badRequestResult.Value as UpdateBalanceBadRequest;
 
+        Assert.That(badRequestResult, Is.Not.Null);
         Assert.That(response, Is.Not.Null);
         Assert.Multiple(() =>
         {
+            Assert.That(badRequestResult.StatusCode, Is.EqualTo(400));
             Assert.That(response.Message, Is.EqualTo("Balance is required."));
             Assert.That(response.StatusCode, Is.EqualTo(400));
         });

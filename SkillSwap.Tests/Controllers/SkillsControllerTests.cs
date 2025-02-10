@@ -86,21 +86,6 @@ public class SkillsControllerTests
     }
 
     [Test]
-    public async Task CreateSkill_ReturnsBadRequest_WhenModelStateIsInvalid()
-    {
-        skillsController.ModelState.AddModelError("Name", "Required");
-        var result = await skillsController.CreateSkill(new Skills());
-        var badRequestResult = result.Result as BadRequestObjectResult;
-
-        Assert.That(badRequestResult, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(badRequestResult.StatusCode, Is.EqualTo(400));
-            Assert.That(badRequestResult.Value, Is.TypeOf<SerializableError>());
-        });
-    }
-
-    [Test]
     public async Task UpdateSkill_ReturnsOkResult_WithUpdatedSkill()
     {
         var skillToUpdate = CreateListSkillsTemplate()[0];

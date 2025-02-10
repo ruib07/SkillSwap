@@ -21,7 +21,9 @@ public class UserSkillsRepository : IUserSkillsRepository
         var user = await Users.AsNoTracking().Include(u => u.Skills)
                               .FirstOrDefaultAsync(u => u.Id == userId);
 
-        return user?.Skills.ToList() ?? new List<Skills>();
+        if (user == null || user.Skills == null) return new List<Skills>();
+
+        return user.Skills.ToList();
     }
 
     public async Task<bool> UserExists(Guid userId)
@@ -37,9 +39,13 @@ public class UserSkillsRepository : IUserSkillsRepository
     public async Task AddSkillToUser(Guid userId, Skills skill)
     {
         var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
-        user.Skills.Add(skill);
+
+        if (user != null && user.Skills == null) user.Skills = new List<Skills>();
+
+        user?.Skills.Add(skill);
         await _context.SaveChangesAsync();
     }
+
 
     public async Task RemoveSkillFromUser(Guid userId, Skills skill)
     {

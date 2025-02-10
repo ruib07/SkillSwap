@@ -54,9 +54,8 @@ public class UsersRepository : IUsersRepository
 
     public async Task<PasswordResetToken> GetPasswordResetToken(string token)
     {
-        return await PasswordResetTokens
-            .Include(prt => prt.User)
-            .FirstOrDefaultAsync(prt => prt.Token == token && prt.ExpiryDate > DateTime.UtcNow);
+        return await PasswordResetTokens.Include(prt => prt.User)
+                                        .FirstOrDefaultAsync(prt => prt.Token == token && prt.ExpiryDate > DateTime.UtcNow);
     }
 
     public async Task RemovePasswordResetToken(PasswordResetToken token)

@@ -25,14 +25,20 @@ public class UserSkillsService
         if (!await _userSkillsRepository.UserExists(userId))
             ErrorHelper.ThrowNotFoundException("User not found.");
 
-        if (!await _userSkillsRepository.SkillExists(skillId))
+        if (!await _userSkillsRepository.SkillExists(skillId)) 
             ErrorHelper.ThrowNotFoundException("Skill not found.");
 
         var skills = await _userSkillsRepository.GetUserSkillsByUser(userId);
-        if (skills.Any(s => s.Id == skillId))
+
+        if (skills == null) skills = new List<Skills>();
+
+        if (skills.Any(s => s.Id == skillId)) 
             ErrorHelper.ThrowConflictException("User already has this skill.");
 
         var skill = await _skillsRepository.GetSkillById(skillId);
+
+        if (skill == null) ErrorHelper.ThrowNotFoundException("Skill not found in repository.");
+
         await _userSkillsRepository.AddSkillToUser(userId, skill);
     }
 
@@ -42,10 +48,12 @@ public class UserSkillsService
             ErrorHelper.ThrowNotFoundException("User not found.");
 
         var skills = await _userSkillsRepository.GetUserSkillsByUser(userId);
+
+        if (skills == null) skills = new List<Skills>();
+
         var skill = skills.FirstOrDefault(s => s.Id == skillId);
 
-        if (skill == null)
-            ErrorHelper.ThrowNotFoundException("User does not have this skill.");
+        if (skill == null) ErrorHelper.ThrowNotFoundException("User does not have this skill.");
 
         await _userSkillsRepository.RemoveSkillFromUser(userId, skill);
     }

@@ -33,10 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SkillSwap.Server\SkillSwap.Server.csproj" />
     <ProjectReference Include="..\SkillSwap.Services\SkillSwap.Services.csproj" />
   </ItemGroup>
