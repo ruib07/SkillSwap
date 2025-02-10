@@ -8,7 +8,6 @@ using static SkillSwap.Server.Models.Responses;
 namespace SkillSwap.Server.Controllers;
 
 [Route("mentorship-requests")]
-[ApiController]
 public class MentorshipRequestsController : ControllerBase
 {
     private readonly MentorshipRequestsService _mentorshipRequests;
@@ -67,20 +66,18 @@ public class MentorshipRequestsController : ControllerBase
     // PUT mentorship-requests/{mentorshiprequestId}
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpPut("{mentorshiprequestId}")]
-    public async Task<IActionResult> UpdateSkill(Guid mentorshiprequestId, [FromBody] MentorshipRequests updateMentorshipRequest)
+    public async Task<IActionResult> UpdateMentorshipRequest(Guid mentorshiprequestId, [FromBody] MentorshipRequests updateMentorshipRequest)
     {
-        var updatedMentorshipReq = await _mentorshipRequests.UpdateMentorshipRequest(mentorshiprequestId, updateMentorshipRequest);
-
+        await _mentorshipRequests.UpdateMentorshipRequest(mentorshiprequestId, updateMentorshipRequest);
         return Ok("Mentorship request updated successfully.");
     }
 
     // DELETE mentorship-requests/{mentorshiprequestId}
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpDelete("{mentorshiprequestId}")]
-    public async Task<IActionResult> DeleteSkill(Guid mentorshiprequestId)
+    public async Task<IActionResult> DeleteMentorshipRequest(Guid mentorshiprequestId)
     {
         await _mentorshipRequests.DeleteMentorshipRequest(mentorshiprequestId);
-
         return NoContent();
     }
 }

@@ -15,7 +15,6 @@ using static SkillSwap.Server.Models.UserAuthentication;
 namespace SkillSwap.Server.Controllers;
 
 [Route("auth")]
-[ApiController]
 public class AuthenticationController : ControllerBase
 {
     private readonly SkillSwapDbContext _context;

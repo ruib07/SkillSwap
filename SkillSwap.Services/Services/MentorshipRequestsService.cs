@@ -49,7 +49,13 @@ public class MentorshipRequestsService
 
     public async Task<MentorshipRequests> UpdateMentorshipRequest(Guid id, MentorshipRequests updateMentorshipRequest)
     {
-        return await _mentorshipRequestsRepository.UpdateMentorshipRequest(id, updateMentorshipRequest);
+        var currentMentorshipRequest = await GetMentorshipRequestById(id);
+
+        currentMentorshipRequest.Status = updateMentorshipRequest.Status;
+        currentMentorshipRequest.ScheduledAt = updateMentorshipRequest.ScheduledAt;
+
+        await _mentorshipRequestsRepository.UpdateMentorshipRequest(currentMentorshipRequest);
+        return currentMentorshipRequest;
     }
 
     public async Task DeleteMentorshipRequest(Guid id)

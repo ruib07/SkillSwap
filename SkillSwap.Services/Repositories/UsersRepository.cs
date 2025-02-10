@@ -71,11 +71,13 @@ public class UsersRepository : IUsersRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateBalance(Guid id, decimal userBalance)
+    public async Task<decimal> UpdateBalance(Guid id, decimal userBalance)
     {
         var user = await GetUserById(id);
         user.Balance = userBalance;
         await _context.SaveChangesAsync();
+
+        return userBalance;
     }
 
     public async Task DeleteUser(Guid id)

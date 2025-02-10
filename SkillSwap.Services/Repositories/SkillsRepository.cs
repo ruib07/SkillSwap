@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SkillSwap.Entities.Entities;
 using SkillSwap.EntitiesConfiguration;
-using SkillSwap.Services.Helpers;
 using SkillSwap.Services.Repositories.Interfaces;
 
 namespace SkillSwap.Services.Repositories;
@@ -34,16 +33,10 @@ public class SkillsRepository : ISkillsRepository
         return skill;
     }
 
-    public async Task<Skills> UpdateSkill(Guid id, Skills updateSkill)
+    public async Task UpdateSkill(Skills skill)
     {
-        var currentSkill = await GetSkillById(id);
-
-        currentSkill.Name = updateSkill.Name;
-        currentSkill.Description = updateSkill.Description;
-
+        _context.Skills.Update(skill);
         await _context.SaveChangesAsync();
-
-        return currentSkill;
     }
 
     public async Task DeleteSkill(Guid id)

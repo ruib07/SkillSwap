@@ -8,6 +8,6 @@ public interface IMentorshipRequestsRepository
     Task<List<MentorshipRequests>> GetMentorshipRequestsbyLearnerId(Guid learnerId);
     Task<List<MentorshipRequests>> GetMentorshipRequestsbyMentorId(Guid mentorId);
     Task<MentorshipRequests> CreateMentorshipRequest(MentorshipRequests mentorshipRequest);
-    Task<MentorshipRequests> UpdateMentorshipRequest(Guid id, MentorshipRequests updateMentorshipRequest);
+    Task UpdateMentorshipRequest(MentorshipRequests mentorshipRequest);
     Task DeleteMentorshipRequest(Guid id);
 }

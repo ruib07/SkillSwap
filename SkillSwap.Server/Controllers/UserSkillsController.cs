@@ -8,7 +8,6 @@ using SkillSwap.Services.Services;
 namespace SkillSwap.Server.Controllers;
 
 [Route("user-skills")]
-[ApiController]
 public class UserSkillsController : ControllerBase
 {
     private readonly UserSkillsService _userSkills;

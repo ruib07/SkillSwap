@@ -37,13 +37,10 @@ public class MentorshipRequestsRepository : IMentorshipRequestsRepository
         return mentorshipRequest;
     }
 
-    public async Task<MentorshipRequests> UpdateMentorshipRequest(Guid id, MentorshipRequests updateMentorshipRequest)
+    public async Task UpdateMentorshipRequest(MentorshipRequests mentorshipRequest)
     {
-        var currentMentorshipRequest = await GetMentorshipRequestById(id);
-        currentMentorshipRequest.Status = updateMentorshipRequest.Status;
-        currentMentorshipRequest.ScheduledAt = updateMentorshipRequest.ScheduledAt;
+        _context.MentorshipRequests.Update(mentorshipRequest);
         await _context.SaveChangesAsync();
-        return currentMentorshipRequest;
     }
 
     public async Task DeleteMentorshipRequest(Guid id)

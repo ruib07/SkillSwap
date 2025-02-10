@@ -32,17 +32,10 @@ public class SessionsRepository : ISessionsRepository
         return session;
     }
 
-    public async Task<Sessions> UpdateSession(Guid id, Sessions updateSession)
+    public async Task UpdateSession(Sessions session)
     {
-        var currentSession = await GetSessionById(id);
-
-        currentSession.SessionTime = updateSession.SessionTime;
-        currentSession.Duration = updateSession.Duration;
-        currentSession.VideoLink = updateSession.VideoLink;
-
+        _context.Sessions.Update(session);
         await _context.SaveChangesAsync();
-
-        return currentSession;
     }
 
     public async Task DeleteSession(Guid id)

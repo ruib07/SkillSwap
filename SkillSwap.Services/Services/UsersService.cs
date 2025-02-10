@@ -41,10 +41,10 @@ public class UsersService
     public async Task<string> GeneratePasswordResetToken(string email)
     {
         var user = await _usersRepository.GetUserByEmail(email);
-        if (user == null)
-            ErrorHelper.ThrowNotFoundException("User not found.");
 
-        return await _usersRepository.GeneratePasswordResetToken(user.Id);
+        if (user != null) return await _usersRepository.GeneratePasswordResetToken(user.Id);
+
+        return null;
     }
 
     public async Task UpdatePassword(string token, string newPassword, string confirmNewPassword)
@@ -85,14 +85,14 @@ public class UsersService
         return currentUser;
     }
 
-    public async Task<Users> UpdateBalance(Guid id, decimal userBalance)
+    public async Task<decimal> UpdateBalance(Guid id, decimal userBalance)
     {
         var user = await GetUserById(id);
         if (userBalance < 0)
             ErrorHelper.ThrowBadRequestException("Balance cannot be negative.");
 
         await _usersRepository.UpdateBalance(id, userBalance);
-        return user;
+        return userBalance;
     }
 
     public async Task DeleteUser(Guid id)

@@ -8,7 +8,6 @@ using static SkillSwap.Server.Models.Responses;
 namespace SkillSwap.Server.Controllers;
 
 [Route("skills")]
-[ApiController]
 public class SkillsController : ControllerBase
 {
     private readonly SkillsService _skills;
@@ -57,8 +56,7 @@ public class SkillsController : ControllerBase
     [HttpPut("{skillId}")]
     public async Task<IActionResult> UpdateSkill(Guid skillId, [FromBody] Skills updateSkill)
     {
-        var updatedSkill = await _skills.UpdateSkill(skillId, updateSkill);
-
+        await _skills.UpdateSkill(skillId, updateSkill);
         return Ok("Skill updated successfully.");
     }
 

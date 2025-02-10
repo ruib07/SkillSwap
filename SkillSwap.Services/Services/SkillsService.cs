@@ -39,9 +39,15 @@ public class SkillsService
 
     public async Task<Skills> UpdateSkill(Guid id, Skills updateSkill)
     {
+        var currentSkill = await GetSkillById(id);
+
         await ValidateSkill(updateSkill, id);
 
-        return await _skillsRepository.UpdateSkill(id, updateSkill);
+        currentSkill.Name = updateSkill.Name;
+        currentSkill.Description = updateSkill.Description;
+
+        await _skillsRepository.UpdateSkill(currentSkill);
+        return currentSkill;
     }
 
     public async Task DeleteSkill(Guid id)

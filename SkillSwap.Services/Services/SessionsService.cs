@@ -39,7 +39,14 @@ public class SessionsService
 
     public async Task<Sessions> UpdateSession(Guid id, Sessions updateSession)
     {
-        return await _sessionsRepository.UpdateSession(id, updateSession);
+        var currentSession = await GetSessionById(id);
+
+        currentSession.SessionTime = updateSession.SessionTime;
+        currentSession.Duration = updateSession.Duration;
+        currentSession.VideoLink = updateSession.VideoLink;
+
+        await _sessionsRepository.UpdateSession(currentSession);
+        return currentSession;
     }
 
     public async Task DeleteSession(Guid id)

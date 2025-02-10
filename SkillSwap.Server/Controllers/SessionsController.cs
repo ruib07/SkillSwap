@@ -8,7 +8,6 @@ using static SkillSwap.Server.Models.Responses;
 namespace SkillSwap.Server.Controllers;
 
 [Route("sessions")]
-[ApiController]
 public class SessionsController : ControllerBase
 {
     private readonly SessionsService _sessions;
@@ -59,8 +58,7 @@ public class SessionsController : ControllerBase
     [HttpPut("{sessionId}")]
     public async Task<IActionResult> UpdateSession(Guid sessionId, [FromBody] Sessions updateSession)
     {
-        var updatedSession = await _sessions.UpdateSession(sessionId, updateSession);
-
+        await _sessions.UpdateSession(sessionId, updateSession);
         return Ok("Session updated successfully.");
     }
 
@@ -70,7 +68,6 @@ public class SessionsController : ControllerBase
     public async Task<IActionResult> DeleteSession(Guid sessionId)
     {
         await _sessions.DeleteSession(sessionId);
-
         return NoContent();
     }
 }

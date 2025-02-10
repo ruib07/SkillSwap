@@ -2,15 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
-using SkillSwap.Server.Models;
 using SkillSwap.Services.Services;
+using System.Net;
 using static SkillSwap.Server.Models.RecoverPassword;
 using static SkillSwap.Server.Models.Responses;
+using static SkillSwap.Server.Models.UpdateBalance;
 
 namespace SkillSwap.Server.Controllers;
 
 [Route("users")]
-[ApiController]
 public class UsersController : ControllerBase
 {
     private readonly UsersService _usersService;
@@ -77,10 +77,19 @@ public class UsersController : ControllerBase
     [HttpPatch("{userId}/balance")]
     public async Task<IActionResult> UpdateBalance(Guid userId, [FromBody] UpdateBalanceRequest request)
     {
-        if (!request.Balance.HasValue) return BadRequest(new { message = "Balance is required." });
+        if (!request.Balance.HasValue) return BadRequest(new UpdateBalanceBadRequest
+        { 
+            Message = "Balance is required.", 
+            StatusCode = (int)HttpStatusCode.BadRequest
+        });
 
         var updatedBalance = await _usersService.UpdateBalance(userId, request.Balance.Value);
-        return Ok(updatedBalance);
+
+        return Ok(new UpdateBalanceResponse
+        { 
+            Message = "Balance updated successfully.", 
+            UpdatedBalance = updatedBalance 
+        });
     }
 
     // DELETE users/{userId}

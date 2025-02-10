@@ -8,7 +8,6 @@ using static SkillSwap.Server.Models.Responses;
 namespace SkillSwap.Server.Controllers;
 
 [Route("payments")]
-[ApiController]
 public class PaymentsController : ControllerBase
 {
     private readonly PaymentsService _payments;

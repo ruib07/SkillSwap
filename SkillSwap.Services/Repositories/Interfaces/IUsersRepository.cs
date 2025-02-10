@@ -11,6 +11,6 @@ public interface IUsersRepository
     Task<PasswordResetToken> GetPasswordResetToken(string token);
     Task RemovePasswordResetToken(PasswordResetToken token);
     Task UpdateUser(Users user);
-    Task UpdateBalance(Guid id, decimal userBalance);
+    Task<decimal> UpdateBalance(Guid id, decimal userBalance);
     Task DeleteUser(Guid id);
 }

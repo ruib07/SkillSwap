@@ -8,7 +8,6 @@ using static SkillSwap.Server.Models.Responses;
 namespace SkillSwap.Server.Controllers;
 
 [Route("reviews")]
-[ApiController]
 public class ReviewsController : ControllerBase
 {
     private readonly ReviewsService _reviews;
