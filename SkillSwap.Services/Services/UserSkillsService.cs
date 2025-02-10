@@ -1,54 +1,52 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SkillSwap.Entities.Entities;
-using SkillSwap.EntitiesConfiguration;
+﻿using SkillSwap.Entities.Entities;
 using SkillSwap.Services.Helpers;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Repositories.Interfaces;
 
 namespace SkillSwap.Services.Services;
 
-public class UserSkillsService : IUserSkills
+public class UserSkillsService
 {
-    private readonly SkillSwapDbContext _context;
-    private DbSet<Users> Users => _context.Users;
-    private DbSet<Skills> Skills => _context.Skills;
+    private readonly IUserSkillsRepository _userSkillsRepository;
+    private readonly ISkillsRepository _skillsRepository;
 
-    public UserSkillsService(SkillSwapDbContext context)
+    public UserSkillsService(IUserSkillsRepository userSkillsRepository, ISkillsRepository skillsRepository)
     {
-        _context = context;
+        _userSkillsRepository = userSkillsRepository;
+        _skillsRepository = skillsRepository;
     }
 
     public async Task<List<Skills>> GetUserSkillsByUser(Guid userId)
     {
-        var user = await Users.AsNoTracking().Include(u => u.Skills)
-                   .FirstOrDefaultAsync(u => u.Id == userId);
-
-        return user?.Skills.ToList() ?? new List<Skills>();
+        return await _userSkillsRepository.GetUserSkillsByUser(userId);
     }
 
     public async Task CreateUserSkill(Guid userId, Guid skillId)
     {
-        var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
-        var skill = await Skills.FirstOrDefaultAsync(s => s.Id == skillId);
+        if (!await _userSkillsRepository.UserExists(userId))
+            ErrorHelper.ThrowNotFoundException("User not found.");
 
-        if (user == null) ErrorHelper.ThrowNotFoundException("User not found.");
-        if (skill == null) ErrorHelper.ThrowNotFoundException("Skill not found.");
-        if (user.Skills.Any(s => s.Id == skillId)) ErrorHelper.ThrowConflictException("User already has this skill.");
+        if (!await _userSkillsRepository.SkillExists(skillId))
+            ErrorHelper.ThrowNotFoundException("Skill not found.");
 
-        user.Skills.Add(skill);
-        await _context.SaveChangesAsync();
+        var skills = await _userSkillsRepository.GetUserSkillsByUser(userId);
+        if (skills.Any(s => s.Id == skillId))
+            ErrorHelper.ThrowConflictException("User already has this skill.");
+
+        var skill = await _skillsRepository.GetSkillById(skillId);
+        await _userSkillsRepository.AddSkillToUser(userId, skill);
     }
 
     public async Task DeleteUserSkill(Guid userId, Guid skillId)
     {
-        var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
+        if (!await _userSkillsRepository.UserExists(userId))
+            ErrorHelper.ThrowNotFoundException("User not found.");
 
-        if (user == null) ErrorHelper.ThrowNotFoundException("User not found.");
+        var skills = await _userSkillsRepository.GetUserSkillsByUser(userId);
+        var skill = skills.FirstOrDefault(s => s.Id == skillId);
 
-        var skill = user.Skills.FirstOrDefault(s => s.Id == skillId);
+        if (skill == null)
+            ErrorHelper.ThrowNotFoundException("User does not have this skill.");
 
-        if (skill == null) ErrorHelper.ThrowNotFoundException("User does not have this skill.");
-
-        user.Skills.Remove(skill);
-        await _context.SaveChangesAsync();
+        await _userSkillsRepository.RemoveSkillFromUser(userId, skill);
     }
 }

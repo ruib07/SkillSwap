@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Services;
 using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
@@ -11,9 +11,9 @@ namespace SkillSwap.Server.Controllers;
 [ApiController]
 public class SkillsController : ControllerBase
 {
-    private ISkills _skills;
+    private readonly SkillsService _skills;
 
-    public SkillsController(ISkills skills)
+    public SkillsController(SkillsService skills)
     {
         _skills = skills;
     }

@@ -1,8 +1,8 @@
 ﻿using SkillSwap.Entities.Entities;
 
-namespace SkillSwap.Services.Interfaces;
+namespace SkillSwap.Services.Repositories.Interfaces;
 
-public interface IMentorshipRequests
+public interface IMentorshipRequestsRepository
 {
     Task<MentorshipRequests> GetMentorshipRequestById(Guid id);
     Task<List<MentorshipRequests>> GetMentorshipRequestsbyLearnerId(Guid learnerId);

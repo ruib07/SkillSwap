@@ -1,8 +1,8 @@
 ﻿using SkillSwap.Entities.Entities;
 
-namespace SkillSwap.Services.Interfaces;
+namespace SkillSwap.Services.Repositories.Interfaces;
 
-public interface IPayments
+public interface IPaymentsRepository
 {
     Task<Payments> GetPaymentById(Guid id);
     Task<List<Payments>> GetPaymentsByPayerId(Guid payerId);

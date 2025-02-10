@@ -3,7 +3,8 @@ using SkillSwap.Server.Configurations;
 using SkillSwap.Server.Constants;
 using SkillSwap.Server.Middlewares;
 using SkillSwap.Services;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Repositories;
+using SkillSwap.Services.Repositories.Interfaces;
 using SkillSwap.Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,17 +14,27 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
+
 builder.Services.AddCustomApiSecurity(configuration);
 builder.Services.AddCustomServiceDependencyRegister(configuration);
 builder.Services.AddCustomDatabaseConfiguration(configuration);
 
-builder.Services.AddScoped<IUsers, UsersService>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<ISkillsRepository, SkillsRepository>();
+builder.Services.AddScoped<IUserSkillsRepository, UserSkillsRepository>();
+builder.Services.AddScoped<IMentorshipRequestsRepository, MentorshipRequestsRepository>();
+builder.Services.AddScoped<ISessionsRepository, SessionsRepository>();
+builder.Services.AddScoped<IReviewsRepository, ReviewsRepository>();
+builder.Services.AddScoped<IPaymentsRepository, PaymentsRepository>();
+
 builder.Services.AddScoped<IEmailPasswordResets, EmailPasswordResetsService>();
-builder.Services.AddScoped<ISkills, SkillsService>();
-builder.Services.AddScoped<IMentorshipRequests, MentorshipRequestsService>();
-builder.Services.AddScoped<ISessions, SessionsService>();
-builder.Services.AddScoped<IReviews, ReviewsService>();
-builder.Services.AddScoped<IPayments, PaymentsService>();
+builder.Services.AddScoped<UsersService>();
+builder.Services.AddScoped<SkillsService>();
+builder.Services.AddScoped<UserSkillsService>();
+builder.Services.AddScoped<MentorshipRequestsService>();
+builder.Services.AddScoped<SessionsService>();
+builder.Services.AddScoped<ReviewsService>();
+builder.Services.AddScoped<PaymentsService>();
 
 builder.Services.AddAuthorizationBuilder()
                 .AddPolicy(ApiConstants.PolicyUser, policy => policy

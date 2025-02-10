@@ -1,29 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SkillSwap.Entities.Entities;
-using SkillSwap.EntitiesConfiguration;
+﻿using SkillSwap.Entities.Entities;
 using SkillSwap.Services.Helpers;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Repositories.Interfaces;
 
 namespace SkillSwap.Services.Services;
 
-public class SkillsService : ISkills
+public class SkillsService
 {
-    private readonly SkillSwapDbContext _context;
-    private DbSet<Skills> Skills => _context.Skills;
+    private readonly ISkillsRepository _skillsRepository;
 
-    public SkillsService(SkillSwapDbContext context)
+    public SkillsService(ISkillsRepository skillsRepository)
     {
-        _context = context;
+        _skillsRepository = skillsRepository;
     }
 
     public async Task<List<Skills>> GetAllSkills()
     {
-        return await Skills.AsNoTracking().ToListAsync();
+        return await _skillsRepository.GetAllSkills();
     }
 
     public async Task<Skills> GetSkillById(Guid id)
     {
-        var skill = await Skills.FirstOrDefaultAsync(s => s.Id == id);
+        var skill = await _skillsRepository.GetSkillById(id);
 
         if (skill == null) ErrorHelper.ThrowNotFoundException("Skill not found.");
 
@@ -32,44 +29,36 @@ public class SkillsService : ISkills
 
     public async Task<Skills> CreateSkill(Skills skill)
     {
-        await EnsureSkillNameIsUnique(skill.Name);
+        await ValidateSkill(skill);
 
         if (string.IsNullOrEmpty(skill.Name) || string.IsNullOrEmpty(skill.Description))
             ErrorHelper.ThrowBadRequestException("Name and description are required.");
 
-        await Skills.AddAsync(skill);
-        await _context.SaveChangesAsync();
-
-        return skill;
+        return await _skillsRepository.CreateSkill(skill);
     }
 
     public async Task<Skills> UpdateSkill(Guid id, Skills updateSkill)
     {
-        var currentSkill = await GetSkillById(id);
+        await ValidateSkill(updateSkill, id);
 
-        await EnsureSkillNameIsUnique(updateSkill.Name, id);
-
-        currentSkill.Name = updateSkill.Name;
-        currentSkill.Description = updateSkill.Description;
-
-        await _context.SaveChangesAsync();
-
-        return currentSkill;
+        return await _skillsRepository.UpdateSkill(id, updateSkill);
     }
 
     public async Task DeleteSkill(Guid id)
     {
-        var deleteSkill = await GetSkillById(id);
-
-        Skills.Remove(deleteSkill);
-        await _context.SaveChangesAsync();
+        await _skillsRepository.DeleteSkill(id);
     }
 
     #region Private Methods
 
-    private async Task EnsureSkillNameIsUnique(string name, Guid? updatingSkillId = null)
+    private async Task ValidateSkill(Skills skill, Guid? updatingSkillId = null)
     {
-        bool skillExists = await Skills.AnyAsync(s => s.Name == name && (!updatingSkillId.HasValue || s.Id != updatingSkillId));
+        if (string.IsNullOrEmpty(skill.Name) || string.IsNullOrEmpty(skill.Description))
+        {
+            ErrorHelper.ThrowBadRequestException("Name and description are required.");
+        }
+
+        var skillExists = await _skillsRepository.EnsureSkillNameIsUnique(skill.Name, updatingSkillId);
 
         if (skillExists) ErrorHelper.ThrowConflictException("Skill Name already exists.");
     }

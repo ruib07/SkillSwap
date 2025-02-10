@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Services;
 using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
@@ -11,9 +11,9 @@ namespace SkillSwap.Server.Controllers;
 [ApiController]
 public class PaymentsController : ControllerBase
 {
-    private readonly IPayments _payments;
+    private readonly PaymentsService _payments;
 
-    public PaymentsController(IPayments payments)
+    public PaymentsController(PaymentsService payments)
     {
         _payments = payments;
     }

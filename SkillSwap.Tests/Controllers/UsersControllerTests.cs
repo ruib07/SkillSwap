@@ -2,10 +2,9 @@
 using Moq;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Controllers;
-using SkillSwap.Services.Helpers;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Repositories.Interfaces;
+using SkillSwap.Services.Services;
 using SkillSwap.Tests.Helpers;
-using System.Net;
 using static SkillSwap.Server.Models.RecoverPassword;
 using static SkillSwap.Server.Models.Responses;
 
@@ -14,14 +13,14 @@ namespace SkillSwap.Tests.Controllers;
 [TestFixture]
 public class UsersControllerTests
 {
-    private Mock<IUsers> usersServiceMock;
+    private Mock<UsersService> usersServiceMock;
     private Mock<IEmailPasswordResets> emailServiceMock;
     private UsersController users;
 
     [SetUp]
     public void Setup()
     {
-        usersServiceMock = new Mock<IUsers>();
+        usersServiceMock = new Mock<UsersService>();
         emailServiceMock = new Mock<IEmailPasswordResets>();
         users = new UsersController(usersServiceMock.Object, emailServiceMock.Object);
     }

@@ -1,9 +1,13 @@
-﻿using SkillSwap.Services.Interfaces;
-using System.Net.Mail;
+﻿using Microsoft.Extensions.Configuration;
 using System.Net;
-using Microsoft.Extensions.Configuration;
+using System.Net.Mail;
 
 namespace SkillSwap.Services.Services;
+
+public interface IEmailPasswordResets
+{
+    Task SendPasswordResetEmail(string email, string token);
+}
 
 public class EmailPasswordResetsService : IEmailPasswordResets
 {

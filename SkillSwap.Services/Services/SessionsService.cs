@@ -1,24 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SkillSwap.Entities.Entities;
-using SkillSwap.EntitiesConfiguration;
+﻿using SkillSwap.Entities.Entities;
 using SkillSwap.Services.Helpers;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Repositories.Interfaces;
 
 namespace SkillSwap.Services.Services;
 
-public class SessionsService : ISessions
+public class SessionsService 
 {
-    private readonly SkillSwapDbContext _context;
-    private DbSet<Sessions> Sessions => _context.Sessions;
+    private readonly ISessionsRepository _sessionsRepository;
 
-    public SessionsService(SkillSwapDbContext context)
+    public SessionsService(ISessionsRepository sessionsRepository)
     {
-        _context = context;
+        _sessionsRepository = sessionsRepository;
     }
 
     public async Task<Sessions> GetSessionById(Guid id)
     {
-        var session = await Sessions.FirstOrDefaultAsync(s => s.Id == id);
+        var session = await _sessionsRepository.GetSessionById(id);
 
         if (session == null) ErrorHelper.ThrowNotFoundException("Session not found.");
 
@@ -27,9 +24,7 @@ public class SessionsService : ISessions
 
     public async Task<List<Sessions>> GetSessionsByMentorshipRequestId(Guid mentorshipRequestId)
     {
-        var sessionsByMentorshipRequest = await Sessions.AsNoTracking()
-                                          .Where(smr => smr.MentorshipRequestId == mentorshipRequestId)
-                                          .ToListAsync();
+        var sessionsByMentorshipRequest = await _sessionsRepository.GetSessionsByMentorshipRequestId(mentorshipRequestId);
 
         if (sessionsByMentorshipRequest == null || sessionsByMentorshipRequest.Count == 0)
             ErrorHelper.ThrowNotFoundException("No sessions found to that mentorship request.");
@@ -39,30 +34,16 @@ public class SessionsService : ISessions
 
     public async Task<Sessions> CreateSession(Sessions session)
     {
-        await Sessions.AddAsync(session);
-        await _context.SaveChangesAsync();
-
-        return session;
+        return await _sessionsRepository.CreateSession(session);
     }
 
     public async Task<Sessions> UpdateSession(Guid id, Sessions updateSession)
     {
-        var currentSession = await GetSessionById(id);
-
-        currentSession.SessionTime = updateSession.SessionTime;
-        currentSession.Duration = updateSession.Duration;
-        currentSession.VideoLink = updateSession.VideoLink;
-
-        await _context.SaveChangesAsync();
-
-        return currentSession;
+        return await _sessionsRepository.UpdateSession(id, updateSession);
     }
 
     public async Task DeleteSession(Guid id)
     {
-        var deleteSession = await GetSessionById(id);
-
-        Sessions.Remove(deleteSession);
-        await _context.SaveChangesAsync();
+        await _sessionsRepository.DeleteSession(id);
     }
 }

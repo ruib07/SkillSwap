@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
 using SkillSwap.Server.Models;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Services;
 using static SkillSwap.Server.Models.RecoverPassword;
 using static SkillSwap.Server.Models.Responses;
 
@@ -13,12 +13,12 @@ namespace SkillSwap.Server.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly IUsers _users;
+    private readonly UsersService _usersService;
     private readonly IEmailPasswordResets _emailService;
 
-    public UsersController(IUsers users, IEmailPasswordResets emailService)
+    public UsersController(UsersService usersService, IEmailPasswordResets emailService)
     {
-        _users = users;
+        _usersService = usersService;
         _emailService = emailService;
     }
 
@@ -26,8 +26,7 @@ public class UsersController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(Guid id)
     {
-        var user = await _users.GetUserById(id);
-
+        var user = await _usersService.GetUserById(id);
         return Ok(user);
     }
 
@@ -37,12 +36,12 @@ public class UsersController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        await _users.CreateUser(user);
+        var createdUser = await _usersService.CreateUser(user);
 
-        return CreatedAtAction(nameof(GetUserById), new {id = user.Id}, new CreationResponse()
+        return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, new CreationResponse
         {
             Message = "User created successfully.",
-            Id = user.Id
+            Id = createdUser.Id
         });
     }
 
@@ -50,7 +49,7 @@ public class UsersController : ControllerBase
     [HttpPost("recoverpassword")]
     public async Task<IActionResult> RecoverPasswordSendEmail([FromBody] RecoverPasswordRequest request)
     {
-        var token = await _users.GeneratePasswordResetToken(request.Email);
+        var token = await _usersService.GeneratePasswordResetToken(request.Email);
         await _emailService.SendPasswordResetEmail(request.Email, token);
 
         return Ok();
@@ -60,8 +59,7 @@ public class UsersController : ControllerBase
     [HttpPut("updatepassword")]
     public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordRequest request)
     {
-        await _users.UpdatePassword(request.Token, request.NewPassword, request.ConfirmNewPassword);
-
+        await _usersService.UpdatePassword(request.Token, request.NewPassword, request.ConfirmNewPassword);
         return Ok();
     }
 
@@ -70,11 +68,9 @@ public class UsersController : ControllerBase
     [HttpPut("{userId}")]
     public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] Users updateUser)
     {
-        await _users.UpdateUser(userId, updateUser);
-
+        await _usersService.UpdateUser(userId, updateUser);
         return Ok("User updated successfully.");
     }
-
 
     // PATCH users/{userId}/balance
     [Authorize(Policy = ApiConstants.PolicyUser)]
@@ -83,8 +79,7 @@ public class UsersController : ControllerBase
     {
         if (!request.Balance.HasValue) return BadRequest(new { message = "Balance is required." });
 
-        var updatedBalance = await _users.UpdateBalance(userId, request.Balance.Value);
-
+        var updatedBalance = await _usersService.UpdateBalance(userId, request.Balance.Value);
         return Ok(updatedBalance);
     }
 
@@ -93,8 +88,7 @@ public class UsersController : ControllerBase
     [HttpDelete("{userId}")]
     public async Task<IActionResult> DeleteUser(Guid userId)
     {
-        await _users.DeleteUser(userId);
-
+        await _usersService.DeleteUser(userId);
         return NoContent();
     }
 }

@@ -1,8 +1,8 @@
 ﻿using SkillSwap.Entities.Entities;
 
-namespace SkillSwap.Services.Interfaces;
+namespace SkillSwap.Services.Repositories.Interfaces;
 
-public interface ISessions
+public interface ISessionsRepository
 {
     Task<Sessions> GetSessionById(Guid id);
     Task<List<Sessions>> GetSessionsByMentorshipRequestId(Guid mentorshipRequestId);

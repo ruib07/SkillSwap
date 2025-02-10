@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Services;
 using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
@@ -11,9 +11,9 @@ namespace SkillSwap.Server.Controllers;
 [ApiController]
 public class ReviewsController : ControllerBase
 {
-    private readonly IReviews _reviews;
+    private readonly ReviewsService _reviews;
 
-    public ReviewsController(IReviews reviews)
+    public ReviewsController(ReviewsService reviews)
     {
         _reviews = reviews;
     }

@@ -1,8 +1,8 @@
 ﻿using SkillSwap.Entities.Entities;
 
-namespace SkillSwap.Services.Interfaces;
+namespace SkillSwap.Services.Repositories.Interfaces;
 
-public interface IReviews
+public interface IReviewsRepository
 {
     Task<Reviews> GetReviewById(Guid id);
     Task<List<Reviews>> GetReviewBySessionId(Guid sessionId);

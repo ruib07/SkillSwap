@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
-using SkillSwap.Services.Interfaces;
+using SkillSwap.Services.Services;
 using static SkillSwap.Server.Models.Responses;
 
 namespace SkillSwap.Server.Controllers;
@@ -11,9 +11,9 @@ namespace SkillSwap.Server.Controllers;
 [ApiController]
 public class SessionsController : ControllerBase
 {
-    private ISessions _sessions;
+    private readonly SessionsService _sessions;
 
-    public SessionsController(ISessions sessions)
+    public SessionsController(SessionsService sessions)
     {
         _sessions = sessions;
     }
