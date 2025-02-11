@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SkillSwap.Entities.Entities;
 using SkillSwap.EntitiesConfiguration;
+using SkillSwap.Services.Helpers;
 using SkillSwap.Services.Repositories;
-using SkillSwap.Tests.Helpers;
 
 namespace SkillSwap.Tests.Repositories;
 
@@ -34,8 +34,7 @@ public class UsersRepositoryTests
     {
         var user = CreateUserTemplate();
 
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+        await usersRepository.CreateUser(user);
 
         var result = await usersRepository.GetUserById(user.Id);
 
@@ -54,8 +53,7 @@ public class UsersRepositoryTests
     {
         var user = CreateUserTemplate();
 
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+        await usersRepository.CreateUser(user);
 
         var result = await usersRepository.GetUserByEmail(user.Email);
 
@@ -91,10 +89,8 @@ public class UsersRepositoryTests
     public async Task GeneratePasswordResetToken_CreatesTokenSuccessfully()
     {
         var existingUser = CreateUserTemplate();
-        
-        context.Users.Add(existingUser);
-        await context.SaveChangesAsync();
 
+        await usersRepository.CreateUser(existingUser);
         var token = await usersRepository.GeneratePasswordResetToken(existingUser.Id);
 
         Assert.That(token, Is.Not.Null);
@@ -106,8 +102,7 @@ public class UsersRepositoryTests
     {
         var existingUser = CreateUserTemplate();
 
-        context.Users.Add(existingUser);
-        await context.SaveChangesAsync();
+        await usersRepository.CreateUser(existingUser);
 
         var token = await usersRepository.GeneratePasswordResetToken(existingUser.Id);
         var savedToken = await usersRepository.GetPasswordResetToken(token);
@@ -125,8 +120,7 @@ public class UsersRepositoryTests
     {
         var existingUser = CreateUserTemplate();
 
-        context.Users.Add(existingUser);
-        await context.SaveChangesAsync();
+        await usersRepository.CreateUser(existingUser);
 
         var token = await usersRepository.GeneratePasswordResetToken(existingUser.Id);
         var savedToken = await usersRepository.GetPasswordResetToken(token);
@@ -151,7 +145,7 @@ public class UsersRepositoryTests
         var updatedUser = UpdateUserTemplate(id: existingUser.Id);
 
         await usersRepository.UpdateUser(updatedUser);
-        var retrievedUpdatedUser = await context.Users.FindAsync(existingUser.Id);
+        var retrievedUpdatedUser = await usersRepository.GetUserById(existingUser.Id);
 
         Assert.That(retrievedUpdatedUser, Is.Not.Null);
         Assert.Multiple(() =>
@@ -168,9 +162,7 @@ public class UsersRepositoryTests
         var existingUser = CreateUserTemplate();
         var newBalanceValue = 199.99m;
 
-        context.Users.Add(existingUser);
-        await context.SaveChangesAsync();
-
+        await usersRepository.CreateUser(existingUser);
         await usersRepository.UpdateBalance(existingUser.Id, newBalanceValue);
         var retrievedUser = await context.Users.FindAsync(existingUser.Id);
 
@@ -183,9 +175,7 @@ public class UsersRepositoryTests
     {
         var existingUser = CreateUserTemplate();
 
-        context.Users.Add(existingUser);
-        await context.SaveChangesAsync();
-
+        await usersRepository.CreateUser(existingUser);
         await usersRepository.DeleteUser(existingUser.Id);
         var retrievedNullUser = await context.Users.FindAsync(existingUser.Id);
 
@@ -201,7 +191,7 @@ public class UsersRepositoryTests
             Id = Guid.NewGuid(),
             Name = "User Test",
             Email = "usertest@gmail.com",
-            Password = PasswordHasherTests.HashPassword("User@Test-123"),
+            Password = PasswordHasher.HashPassword("User@Test-123"),
             Balance = 149.99m
         };
     }
@@ -213,7 +203,7 @@ public class UsersRepositoryTests
             Id = id,
             Name = "User Updated",
             Email = "userupdate@gmail.com",
-            Password = PasswordHasherTests.HashPassword("User@Updated-123"),
+            Password = PasswordHasher.HashPassword("User@Updated-123"),
             Balance = 199.99m
         };
     }

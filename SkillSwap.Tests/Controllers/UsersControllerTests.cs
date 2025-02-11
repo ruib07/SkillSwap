@@ -2,9 +2,9 @@
 using Moq;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Controllers;
+using SkillSwap.Services.Helpers;
 using SkillSwap.Services.Repositories.Interfaces;
 using SkillSwap.Services.Services;
-using SkillSwap.Tests.Helpers;
 using static SkillSwap.Server.Models.RecoverPassword;
 using static SkillSwap.Server.Models.Responses;
 using static SkillSwap.Server.Models.UpdateBalance;
@@ -208,7 +208,7 @@ public class UsersControllerTests
             Id = Guid.NewGuid(),
             Name = "User Test",
             Email = "usertest@gmail.com",
-            Password = PasswordHasherTests.HashPassword("User1@Test-123"),
+            Password = PasswordHasher.HashPassword("User1@Test-123"),
             Balance = 149.99m
         };
     }
@@ -229,7 +229,7 @@ public class UsersControllerTests
         {
             Name = "Updated User",
             Email = email,
-            Password = PasswordHasherTests.HashPassword("Updated@User-123"),
+            Password = PasswordHasher.HashPassword("Updated@User-123"),
             Bio = "Now I have a bio",
             ProfilePicture = "https://i.pinimg.com/736x/d6/82/57/d682577ac42e84125461689aa9b4623a.jpg",
             Balance = 299.99m

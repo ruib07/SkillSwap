@@ -4,7 +4,7 @@ using SkillSwap.Entities.Entities;
 using SkillSwap.EntitiesConfiguration;
 using SkillSwap.Server.Controllers;
 using SkillSwap.Server.Models;
-using SkillSwap.Tests.Helpers;
+using SkillSwap.Services.Helpers;
 using System.Security.Cryptography;
 
 namespace SkillSwap.Tests.Controllers;
@@ -47,7 +47,7 @@ public class AuthenticationControllerTests
         {
             Name = "Valid User",
             Email = "validuser@gmail.com",
-            Password = PasswordHasherTests.HashPassword("Valid@UserPassword-123"),
+            Password = PasswordHasher.HashPassword("Valid@UserPassword-123"),
             Balance = 150
         };
 

@@ -27,16 +27,15 @@ public static class ServiceRegistration
         }
     }
 
+    #region Private Methods
+
     private static void RegisterServicesFromAssembly(IServiceCollection services, Assembly assembly)
     {
-        services.Scan(scan => scan
-                .FromAssemblies(assembly)
-                .AddClasses(classes => classes.Where(p =>
-                    p.Name != null &&
-                    p.Name.EndsWith("Service") &&
-                    !p.IsInterface))
-                .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-                .AsImplementedInterfaces()
+        services.Scan(scan => scan.FromAssemblies(assembly).AddClasses(classes => classes
+                .Where(p => p.Name != null && p.Name.EndsWith("Service") && !p.IsInterface))
+                .UsingRegistrationStrategy(RegistrationStrategy.Skip).AsImplementedInterfaces()
                 .WithScopedLifetime());
     }
+
+    #endregion
 }

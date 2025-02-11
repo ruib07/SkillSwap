@@ -26,6 +26,7 @@ public class AuthenticationController : ControllerBase
         _jwtSettings = jwtSettings;
     }
 
+    // POST auth/login
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody, Required] LoginRequest loginRequest)

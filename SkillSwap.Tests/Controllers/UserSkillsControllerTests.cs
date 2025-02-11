@@ -108,11 +108,7 @@ public class UserSkillsControllerTests
 
     private static UserSkillDto CreateUserSkillDTOTemplate()
     {
-        return new UserSkillDto()
-        {
-            UserId = Guid.NewGuid(),
-            SkillId = Guid.NewGuid()
-        };
+        return new UserSkillDto(UserId: Guid.NewGuid(), SkillId: Guid.NewGuid());
     }
 
     #endregion

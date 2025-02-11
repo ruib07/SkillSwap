@@ -46,7 +46,6 @@ public class UserSkillsRepository : IUserSkillsRepository
         await _context.SaveChangesAsync();
     }
 
-
     public async Task RemoveSkillFromUser(Guid userId, Skills skill)
     {
         var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
