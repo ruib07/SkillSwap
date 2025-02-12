@@ -81,11 +81,11 @@ public class PaymentsRepositoryTests
         Assert.Multiple(() =>
         {
             Assert.That(result, Has.Count.EqualTo(1));
-            Assert.That(result[1].Id, Is.EqualTo(payments[1].Id));
-            Assert.That(result[1].PayerId, Is.EqualTo(payments[1].PayerId));
-            Assert.That(result[1].MentorId, Is.EqualTo(payments[1].MentorId));
-            Assert.That(result[1].Amount, Is.EqualTo(payments[1].Amount));
-            Assert.That(result[1].Status, Is.EqualTo(payments[1].Status));
+            Assert.That(result[0].Id, Is.EqualTo(payments[1].Id));
+            Assert.That(result[0].PayerId, Is.EqualTo(payments[1].PayerId));
+            Assert.That(result[0].MentorId, Is.EqualTo(payments[1].MentorId));
+            Assert.That(result[0].Amount, Is.EqualTo(payments[1].Amount));
+            Assert.That(result[0].Status, Is.EqualTo(payments[1].Status));
         });
     }
 

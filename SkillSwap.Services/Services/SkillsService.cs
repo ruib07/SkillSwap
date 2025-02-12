@@ -31,9 +31,6 @@ public class SkillsService
     {
         await ValidateSkill(skill);
 
-        if (string.IsNullOrEmpty(skill.Name) || string.IsNullOrEmpty(skill.Description))
-            ErrorHelper.ThrowBadRequestException("Name and description are required.");
-
         return await _skillsRepository.CreateSkill(skill);
     }
 
@@ -60,9 +57,8 @@ public class SkillsService
     private async Task ValidateSkill(Skills skill, Guid? updatingSkillId = null)
     {
         if (string.IsNullOrEmpty(skill.Name) || string.IsNullOrEmpty(skill.Description))
-        {
             ErrorHelper.ThrowBadRequestException("Name and description are required.");
-        }
+        
 
         var skillExists = await _skillsRepository.EnsureSkillNameIsUnique(skill.Name, updatingSkillId);
 
