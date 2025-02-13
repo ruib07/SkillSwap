@@ -11,7 +11,5 @@
   <ItemGroup>
     <Folder Include="src\layouts\" />
     <Folder Include="src\components\" />
-    <Folder Include="src\services\helpers\" />
-    <Folder Include="src\types\" />
   </ItemGroup>
 </Project>
