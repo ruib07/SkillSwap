@@ -87,13 +87,16 @@ public class UsersService
 
     public async Task<decimal> UpdateBalance(Guid id, decimal userBalance)
     {
-        var user = await GetUserById(id);
         if (userBalance < 0)
             ErrorHelper.ThrowBadRequestException("Balance cannot be negative.");
 
-        user.Balance = userBalance;
-        await _usersRepository.UpdateUser(user); 
+        var user = await GetUserById(id);
 
+        if (user == null) ErrorHelper.ThrowNotFoundException("User not found.");
+
+        user.Balance = userBalance;
+
+        await _usersRepository.UpdateBalance(user, userBalance);
         return userBalance;
     }
 

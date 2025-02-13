@@ -260,7 +260,7 @@ public class UsersServiceTests
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(user)).ReturnsAsync(user);
         usersRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync(user);
-        usersRepositoryMock.Setup(repo => repo.UpdateBalance(user.Id, newBalance)).ReturnsAsync(newBalance);
+        usersRepositoryMock.Setup(repo => repo.UpdateBalance(user, newBalance)).ReturnsAsync(newBalance);
         usersRepositoryMock.Setup(repo => repo.UpdateUser(It.IsAny<Users>())).Returns(Task.CompletedTask);
 
         await usersService.UpdateBalance(user.Id, newBalance);

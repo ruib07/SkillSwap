@@ -70,10 +70,9 @@ public class UsersRepository : IUsersRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<decimal> UpdateBalance(Guid id, decimal userBalance)
+    public async Task<decimal> UpdateBalance(Users user, decimal userBalance)
     {
-        var user = await GetUserById(id);
-        user.Balance = userBalance;
+        _context.Entry(user).Property(u => u.Balance).CurrentValue = userBalance;
         await _context.SaveChangesAsync();
 
         return userBalance;

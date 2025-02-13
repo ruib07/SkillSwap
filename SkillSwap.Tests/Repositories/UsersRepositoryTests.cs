@@ -163,7 +163,7 @@ public class UsersRepositoryTests
         var newBalanceValue = 199.99m;
 
         await usersRepository.CreateUser(existingUser);
-        await usersRepository.UpdateBalance(existingUser.Id, newBalanceValue);
+        await usersRepository.UpdateBalance(existingUser, newBalanceValue);
         var retrievedUser = await context.Users.FindAsync(existingUser.Id);
 
         Assert.That(retrievedUser, Is.Not.Null);

@@ -6,6 +6,7 @@ using SkillSwap.Services;
 using SkillSwap.Services.Repositories;
 using SkillSwap.Services.Repositories.Interfaces;
 using SkillSwap.Services.Services;
+using SkillSwap.Services.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -26,8 +27,9 @@ builder.Services.AddScoped<IMentorshipRequestsRepository, MentorshipRequestsRepo
 builder.Services.AddScoped<ISessionsRepository, SessionsRepository>();
 builder.Services.AddScoped<IReviewsRepository, ReviewsRepository>();
 builder.Services.AddScoped<IPaymentsRepository, PaymentsRepository>();
-
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IEmailPasswordResets, EmailPasswordResetsService>();
+
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<SkillsService>();
 builder.Services.AddScoped<UserSkillsService>();

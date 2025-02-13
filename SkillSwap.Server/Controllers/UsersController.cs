@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Constants;
 using SkillSwap.Services.Services;
+using SkillSwap.Services.Services.Email;
 using System.Net;
 using static SkillSwap.Server.Models.RecoverPassword;
 using static SkillSwap.Server.Models.Responses;

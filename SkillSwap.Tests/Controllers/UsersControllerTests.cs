@@ -5,6 +5,7 @@ using SkillSwap.Server.Controllers;
 using SkillSwap.Services.Helpers;
 using SkillSwap.Services.Repositories.Interfaces;
 using SkillSwap.Services.Services;
+using SkillSwap.Services.Services.Email;
 using static SkillSwap.Server.Models.RecoverPassword;
 using static SkillSwap.Server.Models.Responses;
 using static SkillSwap.Server.Models.UpdateBalance;
@@ -148,7 +149,7 @@ public class UsersControllerTests
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(It.IsAny<Users>())).ReturnsAsync(user);
         usersRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync(user);
-        usersRepositoryMock.Setup(repo => repo.UpdateBalance(user.Id, request.Balance.Value))
+        usersRepositoryMock.Setup(repo => repo.UpdateBalance(user, request.Balance.Value))
                            .ReturnsAsync(updatedBalance);
 
         var result = await usersController.UpdateBalance(user.Id, request);
