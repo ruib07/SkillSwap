@@ -91,13 +91,14 @@ public class UsersService
         if (userBalance < 0)
             ErrorHelper.ThrowBadRequestException("Balance cannot be negative.");
 
-        await _usersRepository.UpdateBalance(id, userBalance);
+        user.Balance = userBalance;
+        await _usersRepository.UpdateUser(user); 
+
         return userBalance;
     }
 
     public async Task DeleteUser(Guid id)
     {
-        var user = await GetUserById(id);
         await _usersRepository.DeleteUser(id);
     }
 }
