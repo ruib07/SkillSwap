@@ -9,7 +9,6 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\layouts\" />
-    <Folder Include="src\components\" />
+    <None Remove="public\assets\icons\CodingIcon.png" />
   </ItemGroup>
 </Project>

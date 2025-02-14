@@ -2,39 +2,39 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { IRegistration } from "../types/authentication";
-import { Registration } from "../services/authenticationService";
+import { ILogin } from "../types/authentication";
+import { Login } from "../services/authenticationService";
+import { jwtDecode } from "jwt-decode";
 import { showToast } from "../utils/toastHelper";
 import Img from "/assets/SkillSwap-Logo.png";
 
-export default function NewRegistration() {
-    const [name, setName] = useState("");
+export default function Authentication() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [bio, setBio] = useState("");
-    const [profilePicture, setProfilePicture] = useState("");
-    const [balance, setBalance] = useState("");
     const [visible, setVisible] = useState(true);
     const navigate = useNavigate();
 
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
 
-        const newUser: IRegistration = {
-            name,
-            email,
-            password,
-            bio,
-            profilePicture,
-            balance: parseFloat(balance) || 0,
-        };
+        const auth: ILogin = { email, password };
 
         try {
-            await Registration(newUser);
-            showToast("Registration completed successfully!", "success");
-            navigate("/Authentication/Login");
+            const res = await Login(auth);
+            const token = res.data.accessToken;
+
+            if (token) {
+                localStorage.setItem("token", token);
+                const decodedToken: any = jwtDecode(token);
+
+                const userId = decodedToken.Id;
+                localStorage.setItem("userId", userId);
+                navigate("/");
+            } else {
+                showToast("Something went wrong!", "error");
+            }
         } catch {
-            showToast("Registration was not completed!", "error");
+            showToast("Something went wrong!", "error");
         }
     };
 
@@ -50,20 +50,9 @@ export default function NewRegistration() {
                 <div className="w-full bg-gray-800 max-w-lg border border-gray-600 rounded-lg shadow">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-300 md:text-2xl text-left">
-                            Create an Account
+                            Sign in to your account
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={handleRegister}>
-                            <div>
-                                <label className="block mb-2 text-sm font-medium text-gray-300">Full Name *</label>
-                                <input
-                                    type="text"
-                                    className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
-                                    placeholder="Your Name"
-                                    required
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                />
-                            </div>
 
                             <div>
                                 <label className="block mb-2 text-sm font-medium text-gray-300">Email *</label>
@@ -95,61 +84,31 @@ export default function NewRegistration() {
                                         <FontAwesomeIcon icon={visible ? faEye : faEyeSlash} />
                                     </span>
                                 </div>
+
+                                <div className="mt-3 text-sm text-right">
+                                    <a
+                                        href="/RecoverPassword/SendEmail"
+                                        className="font-semibold text-blue-500 hover:underline"
+                                    >
+                                        Forgot password?
+                                    </a>
+                                </div>
                             </div>
 
-                            <div>
-                                <label className="block mb-2 text-sm font-medium text-gray-300">Bio (optional)</label>
-                                <textarea
-                                    className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
-                                    rows={3}
-                                    placeholder="Tell us about yourself..."
-                                    value={bio}
-                                    onChange={(e) => setBio(e.target.value)}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block mb-2 text-sm font-medium text-gray-300">Profile Picture URL (optional)</label>
-                                <input
-                                    type="text"
-                                    className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
-                                    placeholder="https://your-image-url.com"
-                                    value={profilePicture}
-                                    onChange={(e) => setProfilePicture(e.target.value)}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block mb-2 text-sm font-medium text-gray-300">Balance *</label>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
-                                    placeholder="Balance"
-                                    value={balance}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        if (value === "" || parseFloat(value) >= 0) {
-                                            setBalance(value);
-                                        }
-                                    }}
-                                />
-                            </div>
 
                             <button
                                 type="submit"
                                 className="w-full text-white bg-blue-600 hover:bg-blue-700 cursor-pointer focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                             >
-                                Sign Up
+                                Sign In
                             </button>
 
                             <p className="text-sm font-light text-gray-400 text-left">
-                                Have an account?{" "}
+                                Don’t have an account yet?{" "}
                                 <a
-                                    href="/Authentication/Login"
+                                    href="/Authentication/Registration"
                                     className="font-medium text-blue-500 hover:underline">
-                                    Sign In
+                                    Sign Up
                                 </a>
                             </p>
                         </form>

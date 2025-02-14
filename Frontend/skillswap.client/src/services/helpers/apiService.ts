@@ -1,15 +1,18 @@
-import axios from 'axios';
+import axios from "axios";
+import { GetAuthHeaders } from "./getAuthHeaders";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const apiAuthRequest = async (method: "POST" | "PUT", endpoint: string, data?: any) => {
+const apiRequest = async (method: "GET" | "POST" | "PUT" | "DELETE", endpoint: string, data?: any) => {
     try {
+        const headers = GetAuthHeaders();
         const url = `${API_BASE_URL}/${endpoint}`;
 
         const response = await axios({
             method,
             url,
             data,
+            headers,
         });
 
         return response;
@@ -18,4 +21,4 @@ const apiAuthRequest = async (method: "POST" | "PUT", endpoint: string, data?: a
     }
 };
 
-export default apiAuthRequest;
+export default apiRequest;

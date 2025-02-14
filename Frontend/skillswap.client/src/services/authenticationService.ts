@@ -3,4 +3,4 @@ import apiAuthRequest from './helpers/apiAuthService';
 
 export const Registration = async (newUser: IRegistration) => await apiAuthRequest("POST", "users", newUser);
 
-export const Login = async (login: ILogin) => await apiAuthRequest("POST", "login", login);
+export const Login = async (login: ILogin) => await apiAuthRequest("POST", "auth/login", login);
