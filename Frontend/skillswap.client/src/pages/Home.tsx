@@ -61,7 +61,7 @@ export default function Home() {
                             Why Choose SkillSwap?
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 cursor-pointer">
-                            <div className="p-6 bg-gray-800 border border-gray-600 shadow-md rounded-lg">
+                            <div className="p-6 bg-gray-800 border border-gray-600 shadow-md rounded-lg hover:shadow-md hover:shadow-gray-700 hover:scale-105 transition-transform transform">
                                 <img
                                     src="/assets/icons/Mentor.png"
                                     alt="Mentoring"
@@ -75,7 +75,7 @@ export default function Home() {
                                 </p>
                             </div>
 
-                            <div className="p-6 bg-gray-800 border border-gray-600 shadow-md rounded-lg">
+                            <div className="p-6 bg-gray-800 border border-gray-600 shadow-md rounded-lg hover:shadow-md hover:shadow-gray-700 hover:scale-105 transition-transform transform">
                                 <img
                                     src="assets/icons/Coding.png"
                                     alt="Software Development"
@@ -89,7 +89,7 @@ export default function Home() {
                                 </p>
                             </div>
 
-                            <div className="p-6 bg-gray-800 border border-gray-600 shadow-md rounded-lg">
+                            <div className="p-6 bg-gray-800 border border-gray-600 shadow-md rounded-lg hover:shadow-md hover:shadow-gray-700 hover:scale-105 transition-transform transform">
                                 <img
                                     src="assets/icons/Community.png"
                                     alt="Community Support"

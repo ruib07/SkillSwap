@@ -3,10 +3,15 @@ import { GetAuthHeaders } from "./getAuthHeaders";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const apiRequest = async (method: "GET" | "POST" | "PUT" | "DELETE", endpoint: string, data?: any) => {
+const apiRequest = async (
+    method: "GET" | "POST" | "PUT" | "DELETE",
+    endpoint: string,
+    data?: any,
+    withAuth: boolean = true 
+) => {
     try {
-        const headers = GetAuthHeaders();
         const url = `${API_BASE_URL}/${endpoint}`;
+        const headers = withAuth ? GetAuthHeaders() : {}; 
 
         const response = await axios({
             method,

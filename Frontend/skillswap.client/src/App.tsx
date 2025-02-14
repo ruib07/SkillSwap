@@ -13,6 +13,9 @@ import Authentication from "./pages/Login";
 import RecoverPasswordEmail from "./components/PasswordRecovery/EmailToRecoverPassword";
 import RecoverPasswordUpdate from "./components/PasswordRecovery/ChangePassword";
 
+import SkillDetails from "./components/Skills/SkillDetails";
+import SkillCreation from "./components/Skills/CreateSkill";
+
 export default function App() {
     return (
         <Router>
@@ -34,7 +37,9 @@ export default function App() {
                         <Route path="/Authentication/Registration" element={<NewRegistration />} />
                         <Route path="/Authentication/Login" element={<Authentication />} />
                         <Route path="/RecoverPassword/SendEmail" element={<RecoverPasswordEmail />} />
-                        <Route path="/RecoverPassword/ChangePassword" element={<RecoverPasswordUpdate />} />"
+                        <Route path="/RecoverPassword/ChangePassword" element={<RecoverPasswordUpdate />} />
+                        <Route path="/Skill/:skillId" element={<SkillDetails /> } />
+                        <Route path="/Skills/Create" element={<SkillCreation /> } />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                 </div>
