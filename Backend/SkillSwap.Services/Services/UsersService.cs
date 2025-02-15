@@ -20,6 +20,14 @@ public class UsersService
         return user;
     }
 
+    public async Task<List<Users>> GetMentors()
+    {
+        var mentors = await _usersRepository.GetMentors();
+        if (mentors == null) ErrorHelper.ThrowNotFoundException("No mentors found.");
+
+        return mentors;
+    }
+
     public async Task<Users> CreateUser(Users user)
     {
         var existingUser = await _usersRepository.GetUserByEmail(user.Email);
@@ -80,6 +88,7 @@ public class UsersService
         currentUser.Bio = updateUser.Bio;
         currentUser.ProfilePicture = updateUser.ProfilePicture;
         currentUser.Balance = updateUser.Balance;
+        currentUser.IsMentor = updateUser.IsMentor;
 
         await _usersRepository.UpdateUser(currentUser);
         return currentUser;

@@ -18,6 +18,7 @@ public class UsersConfig : IEntityTypeConfiguration<Users>
         builder.Property(p => p.Bio).HasColumnType("varchar(MAX)");
         builder.Property(p => p.ProfilePicture).HasMaxLength(255);
         builder.Property(p => p.Balance).HasColumnType("decimal(10, 2)");
+        builder.Property(p => p.IsMentor).IsRequired().HasDefaultValue(false);
 
         builder.Property(p => p.CreatedAt)
                .HasDefaultValueSql("GETUTCDATE()")

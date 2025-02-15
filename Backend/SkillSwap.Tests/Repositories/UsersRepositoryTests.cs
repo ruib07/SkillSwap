@@ -32,7 +32,7 @@ public class UsersRepositoryTests
     [Test]
     public async Task GetUserById_ReturnsUser()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
 
         await usersRepository.CreateUser(user);
 
@@ -51,7 +51,7 @@ public class UsersRepositoryTests
     [Test]
     public async Task GetUserByEmail_ReturnsUser()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
 
         await usersRepository.CreateUser(user);
 
@@ -68,9 +68,29 @@ public class UsersRepositoryTests
     }
 
     [Test]
+    public async Task GetMentors_ReturnsListOfMentors()
+    {
+        var mentors = CreateUserTemplate();
+        context.Users.AddRange(mentors);
+        await context.SaveChangesAsync();
+
+        var result = await usersRepository.GetMentors();
+
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0].Id, Is.EqualTo(mentors[0].Id));
+            Assert.That(result[0].Name, Is.EqualTo(mentors[0].Name));
+            Assert.That(result[0].Email, Is.EqualTo(mentors[0].Email));
+            Assert.That(result[0].Balance, Is.EqualTo(mentors[0].Balance));
+            Assert.That(result[0].IsMentor, Is.EqualTo(mentors[0].IsMentor));
+        });
+    }
+
+    [Test]
     public async Task CreateUser_AddsUser()
     {
-        var newUser = CreateUserTemplate();
+        var newUser = CreateUserTemplate()[0];
 
         var result = await usersRepository.CreateUser(newUser);
         var addedUser = await context.Users.FindAsync(newUser.Id);
@@ -88,7 +108,7 @@ public class UsersRepositoryTests
     [Test]
     public async Task GeneratePasswordResetToken_CreatesTokenSuccessfully()
     {
-        var existingUser = CreateUserTemplate();
+        var existingUser = CreateUserTemplate()[0];
 
         await usersRepository.CreateUser(existingUser);
         var token = await usersRepository.GeneratePasswordResetToken(existingUser.Id);
@@ -100,7 +120,7 @@ public class UsersRepositoryTests
     [Test]
     public async Task GetPasswordResetToken_ReturnsToken()
     {
-        var existingUser = CreateUserTemplate();
+        var existingUser = CreateUserTemplate()[0];
 
         await usersRepository.CreateUser(existingUser);
 
@@ -118,7 +138,7 @@ public class UsersRepositoryTests
     [Test]
     public async Task RemovePasswordResetToken_RemovesToken()
     {
-        var existingUser = CreateUserTemplate();
+        var existingUser = CreateUserTemplate()[0];
 
         await usersRepository.CreateUser(existingUser);
 
@@ -137,7 +157,7 @@ public class UsersRepositoryTests
     [Test]
     public async Task UpdateUser_UpdatesSuccessfully()
     {
-        var existingUser = CreateUserTemplate();
+        var existingUser = CreateUserTemplate()[0];
         await usersRepository.CreateUser(existingUser);
 
         context.Entry(existingUser).State = EntityState.Detached;
@@ -159,7 +179,7 @@ public class UsersRepositoryTests
     [Test]
     public async Task UpdateBalance_UpdatesSuccessfully()
     {
-        var existingUser = CreateUserTemplate();
+        var existingUser = CreateUserTemplate()[0];
         var newBalanceValue = 199.99m;
 
         await usersRepository.CreateUser(existingUser);
@@ -173,7 +193,7 @@ public class UsersRepositoryTests
     [Test]
     public async Task DeleteUser_DeletesSuccessfully()
     {
-        var existingUser = CreateUserTemplate();
+        var existingUser = CreateUserTemplate()[0];
 
         await usersRepository.CreateUser(existingUser);
         await usersRepository.DeleteUser(existingUser.Id);
@@ -184,15 +204,19 @@ public class UsersRepositoryTests
 
     #region Private Methods
 
-    private static Users CreateUserTemplate()
+    private static List<Users> CreateUserTemplate()
     {
-        return new Users()
+        return new List<Users>()
         {
-            Id = Guid.NewGuid(),
-            Name = "User Test",
-            Email = "usertest@gmail.com",
-            Password = PasswordHasher.HashPassword("User@Test-123"),
-            Balance = 149.99m
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "User Test",
+                Email = "usertest@gmail.com",
+                Password = PasswordHasher.HashPassword("User@Test-123"),
+                Balance = 149.99m,
+                IsMentor = true
+            }
         };
     }
 
@@ -204,7 +228,8 @@ public class UsersRepositoryTests
             Name = "User Updated",
             Email = "userupdate@gmail.com",
             Password = PasswordHasher.HashPassword("User@Updated-123"),
-            Balance = 199.99m
+            Balance = 199.99m,
+            IsMentor = false
         };
     }
 

@@ -36,6 +36,7 @@ public class Users
     public string Bio { get; set; }
     public string ProfilePicture { get; set; }
     public decimal Balance { get; set; }
+    public bool IsMentor { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime CreatedAt { get; set; }

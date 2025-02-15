@@ -32,7 +32,7 @@ public class UsersControllerTests
     [Test]
     public async Task GetUserById_ReturnsOkResult_WithUser()
     {
-        var mockUser = CreateUserTemplate();
+        var mockUser = CreateUserTemplate()[0];
 
         usersRepositoryMock.Setup(repo => repo.GetUserById(mockUser.Id)).ReturnsAsync(mockUser);
         var result = await usersController.GetUserById(mockUser.Id);
@@ -52,9 +52,29 @@ public class UsersControllerTests
     }
 
     [Test]
+    public async Task GetMentors_ReturnsOkResult_WithMentors()
+    {
+        var mentors = CreateUserTemplate();
+
+        usersRepositoryMock.Setup(repo => repo.GetMentors()).ReturnsAsync(mentors);
+
+        var result = await usersController.GetMentors();
+        var okResult = result.Result as OkObjectResult;
+        var response = okResult.Value as List<Users>;
+
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(response, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(okResult.StatusCode, Is.EqualTo(200));
+            Assert.That(response, Has.Count.EqualTo(1));
+        });
+    }
+
+    [Test]
     public async Task CreateUser_ReturnsCreatedResult_WithValidUser()
     {
-        var newUser = CreateUserTemplate();
+        var newUser = CreateUserTemplate()[0];
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(It.IsAny<Users>())).ReturnsAsync(newUser);
         usersRepositoryMock.Setup(repo => repo.GetUserByEmail(newUser.Email)).ReturnsAsync((Users)null);
@@ -74,7 +94,7 @@ public class UsersControllerTests
     [Test]
     public async Task RecoverPassword_ReturnsOk_WhenTokenGeneratedAndEmailSent()
     {
-        var newUser = CreateUserTemplate();
+        var newUser = CreateUserTemplate()[0];
         var passwordResetToken = "generated_token";
 
         usersRepositoryMock.Setup(repo => repo.GetUserByEmail(newUser.Email)).ReturnsAsync(newUser);
@@ -100,14 +120,14 @@ public class UsersControllerTests
         var result = await usersController.RecoverPasswordSendEmail(request);
         var okResult = result as OkResult;
 
-        Assert.That(okResult.StatusCode, Is.EqualTo(200));  
+        Assert.That(okResult.StatusCode, Is.EqualTo(200));
     }
 
     [Test]
     public async Task UpdatePassword_ReturnsOkResult_WhenPasswordIsUpdatedSuccessfully()
     {
         var request = UpdatePasswordRequestTemplate(confirmNewPassword: "New@Password-123");
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
         var token = new PasswordResetToken { Token = request.Token, User = user };
 
         usersRepositoryMock.Setup(repo => repo.GetPasswordResetToken(request.Token)).ReturnsAsync(token);
@@ -123,7 +143,7 @@ public class UsersControllerTests
     [Test]
     public async Task UpdateUser_ReturnsOkResult_WithUpdatedUser()
     {
-        var userToUpdate = CreateUserTemplate();
+        var userToUpdate = CreateUserTemplate()[0];
         var updatedUser = UpdateUserTemplate(email: "updateduser@gmail.com");
 
         usersRepositoryMock.Setup(repo => repo.GetUserById(userToUpdate.Id)).ReturnsAsync(userToUpdate);
@@ -143,9 +163,9 @@ public class UsersControllerTests
     [Test]
     public async Task UpdateBalance_ReturnsOkResult_WhenBalanceIsProvided()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
         var updatedBalance = 249.99m;
-        var request = new UpdateBalanceRequest() { Balance = updatedBalance };   
+        var request = new UpdateBalanceRequest() { Balance = updatedBalance };
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(It.IsAny<Users>())).ReturnsAsync(user);
         usersRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync(user);
@@ -166,7 +186,7 @@ public class UsersControllerTests
     [Test]
     public async Task UpdateBalance_ReturnsBadRequest_WhenBalanceIsNotProvided()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
         var request = new UpdateBalanceRequest() { Balance = null };
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(It.IsAny<Users>())).ReturnsAsync(user);
@@ -189,7 +209,7 @@ public class UsersControllerTests
     [Test]
     public async Task DeleteUser_ReturnsNoContent_WhenUserIsDeleted()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
 
         usersRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync(user);
         usersRepositoryMock.Setup(repo => repo.DeleteUser(user.Id)).Returns(Task.CompletedTask);
@@ -202,15 +222,19 @@ public class UsersControllerTests
 
     #region Private Methods
 
-    private static Users CreateUserTemplate()
+    private static List<Users> CreateUserTemplate()
     {
-        return new Users()
+        return new List<Users>()
         {
-            Id = Guid.NewGuid(),
-            Name = "User Test",
-            Email = "usertest@gmail.com",
-            Password = PasswordHasher.HashPassword("User1@Test-123"),
-            Balance = 149.99m
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "User Test",
+                Email = "usertest@gmail.com",
+                Password = PasswordHasher.HashPassword("User1@Test-123"),
+                Balance = 149.99m,
+                IsMentor = true
+            }
         };
     }
 
@@ -233,7 +257,8 @@ public class UsersControllerTests
             Password = PasswordHasher.HashPassword("Updated@User-123"),
             Bio = "Now I have a bio",
             ProfilePicture = "https://i.pinimg.com/736x/d6/82/57/d682577ac42e84125461689aa9b4623a.jpg",
-            Balance = 299.99m
+            Balance = 299.99m,
+            IsMentor = false
         };
     }
 

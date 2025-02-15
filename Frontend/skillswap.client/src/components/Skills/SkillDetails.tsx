@@ -34,9 +34,30 @@ export default function SkillDetails() {
     return (
         <>
             <Header /><br />
-            <div className="mt-[100px]">
-                <p>Name: {skill.name}</p>
-                <p>Description: {skill.description}</p>
+            <div className="mt-24 container mx-auto p-4 md:p-8">
+                <div className="max-w-3xl mx-auto bg-gray-800 text-white rounded-xl shadow-lg overflow-hidden">
+                    <div className="p-8">
+                        <h2 className="text-3xl font-bold text-center mb-4">{skill.name}</h2>
+                        <div className="flex justify-center mb-6">
+                            <div className="w-16 h-1 bg-blue-600 rounded-full"></div>
+                        </div>
+
+                        <p className="text-lg text-gray-400 mb-6">{skill.description}</p>
+
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-400">Mentors available to this skill:</span>
+                                <span className="text-lg font-semibold text-blue-400">TODO</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex justify-center">
+                            <button className="px-6 py-2 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 cursor-pointer">
+                                Add Skill to your stack
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     )

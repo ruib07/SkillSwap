@@ -35,15 +35,15 @@ export default function Header() {
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+            const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
 
-            if (!token) {
+            if (!token || !userId) {
                 setUserData(null);
                 return;
             }
 
             try {
-                const userId = localStorage.getItem("userId");
                 const response = await GetUserById(userId!);
                 const { name, profilePicture } = response.data;
                 setUserData({ name, profilePicture });

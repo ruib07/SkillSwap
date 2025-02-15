@@ -10,6 +10,7 @@ export interface IRegistration {
     bio: string;
     profilePicture: string;
     balance: number;
+    isMentor: boolean;
 }
 
 export interface ISendEmail {

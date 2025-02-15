@@ -6,6 +6,7 @@ public interface IUsersRepository
 {
     Task<Users> GetUserById(Guid id);
     Task<Users> GetUserByEmail(string email);
+    Task<List<Users>> GetMentors();
     Task<Users> CreateUser(Users user);
     Task<string> GeneratePasswordResetToken(Guid userId);
     Task<PasswordResetToken> GetPasswordResetToken(string token);

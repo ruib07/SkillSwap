@@ -12,6 +12,7 @@ export default function Authentication() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(true);
+    const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
 
     const handleRegister = async (e: FormEvent) => {
@@ -22,17 +23,18 @@ export default function Authentication() {
         try {
             const res = await Login(auth);
             const token = res.data.accessToken;
+            const decodedToken: any = jwtDecode(token);
+            const userId = decodedToken.Id;
 
-            if (token) {
+            if (rememberMe) {
                 localStorage.setItem("token", token);
-                const decodedToken: any = jwtDecode(token);
-
-                const userId = decodedToken.Id;
                 localStorage.setItem("userId", userId);
-                navigate("/");
             } else {
-                showToast("Something went wrong!", "error");
+                sessionStorage.setItem("token", token);
+                sessionStorage.setItem("userId", userId);
             }
+
+            navigate("/");
         } catch {
             showToast("Something went wrong!", "error");
         }
@@ -84,15 +86,29 @@ export default function Authentication() {
                                         <FontAwesomeIcon icon={visible ? faEye : faEyeSlash} />
                                     </span>
                                 </div>
+                            </div>
 
-                                <div className="mt-3 text-sm text-right">
-                                    <a
-                                        href="/RecoverPassword/SendEmail"
-                                        className="font-semibold text-blue-500 hover:underline"
-                                    >
-                                        Forgot password?
-                                    </a>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-start">
+                                    <div className="ml-3 text-sm">
+                                        <label className="text-gray-500 dark:text-gray-300">Remember me</label>
+                                    </div>
+                                    <div className="ms-2 flex items-center h-5">
+                                        <input
+                                            aria-describedby="remember"
+                                            type="checkbox"
+                                            checked={rememberMe}
+                                            onClick={() => setRememberMe(!rememberMe)}
+                                            className="w-4 h-4 border rounded focus:ring-3 bg-gray-700 border-gray-900 focus:ring-blue-600 ring-offset-gray-800"
+                                        />
+                                    </div>
                                 </div>
+                                <a
+                                    href="/RecoverPassword/SendEmail"
+                                    className="font-semibold text-blue-500 hover:underline"
+                                >
+                                    Forgot password?
+                                </a>
                             </div>
 
 

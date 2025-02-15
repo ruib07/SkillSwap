@@ -14,6 +14,7 @@ export default function NewRegistration() {
     const [bio, setBio] = useState("");
     const [profilePicture, setProfilePicture] = useState("");
     const [balance, setBalance] = useState("");
+    const [isMentor, setIsMentor] = useState<boolean>(false);
     const [visible, setVisible] = useState(true);
     const navigate = useNavigate();
 
@@ -27,6 +28,7 @@ export default function NewRegistration() {
             bio,
             profilePicture,
             balance: parseFloat(balance) || 0,
+            isMentor,
         };
 
         try {
@@ -135,6 +137,19 @@ export default function NewRegistration() {
                                         }
                                     }}
                                 />
+                            </div>
+
+                            <div>
+                                <label className="block mb-2 text-sm font-medium text-gray-300">Are you a mentor? *</label>
+                                <select
+                                    className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
+                                    value={isMentor.toString()}
+                                    onChange={(e) => setIsMentor(e.target.value === "true")}
+                                    required
+                                >
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
                             </div>
 
                             <button

@@ -31,6 +31,14 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
+    // GET users/mentors
+    [HttpGet("mentors")]
+    public async Task<ActionResult<List<Users>>> GetMentors()
+    {
+        var mentors = await _usersService.GetMentors();
+        return Ok(mentors);
+    }
+
     // POST users
     [HttpPost]
     public async Task<ActionResult<Users>> CreateUser([FromBody] Users user)

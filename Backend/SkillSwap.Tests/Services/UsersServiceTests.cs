@@ -4,6 +4,7 @@ using SkillSwap.Services.Helpers;
 using SkillSwap.Services.Repositories.Interfaces;
 using SkillSwap.Services.Services;
 using System.Net;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using static SkillSwap.Server.Models.RecoverPassword;
 
 namespace SkillSwap.Tests.Services;
@@ -24,7 +25,7 @@ public class UsersServiceTests
     [Test]
     public async Task GetUserById_ReturnsUser()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
 
         usersRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync(user);
 
@@ -38,6 +39,7 @@ public class UsersServiceTests
             Assert.That(result.Email, Is.EqualTo(user.Email));
             Assert.That(result.Password, Is.EqualTo(user.Password));
             Assert.That(result.Balance, Is.EqualTo(user.Balance));
+            Assert.That(result.IsMentor, Is.EqualTo(user.IsMentor));
         });
     }
 
@@ -56,9 +58,30 @@ public class UsersServiceTests
     }
 
     [Test]
+    public async Task GetMentors_ReturnsMentors()
+    {
+        var mentors = CreateUserTemplate();
+
+        usersRepositoryMock.Setup(repo => repo.GetMentors()).ReturnsAsync(mentors);
+
+        var result = await usersService.GetMentors();
+
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0].Id, Is.EqualTo(mentors[0].Id));
+            Assert.That(result[0].Name, Is.EqualTo(mentors[0].Name));
+            Assert.That(result[0].Email, Is.EqualTo(mentors[0].Email));
+            Assert.That(result[0].Password, Is.EqualTo(mentors[0].Password));
+            Assert.That(result[0].Balance, Is.EqualTo(mentors[0].Balance));
+            Assert.That(result[0].IsMentor, Is.EqualTo(mentors[0].IsMentor));
+        });
+    }
+
+    [Test]
     public async Task CreateUser_CreatesSuccessfully()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(user)).ReturnsAsync(user);
 
@@ -72,13 +95,14 @@ public class UsersServiceTests
             Assert.That(result.Email, Is.EqualTo(user.Email));
             Assert.That(result.Password, Is.EqualTo(user.Password));
             Assert.That(result.Balance, Is.EqualTo(user.Balance));
+            Assert.That(result.IsMentor, Is.EqualTo(user.IsMentor));
         });
     }
 
     [Test]
     public void CreateUser_ReturnsConflictException_WhenEmailAlreadyExists()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
 
         usersRepositoryMock.Setup(repo => repo.GetUserByEmail(user.Email)).ReturnsAsync(user);
 
@@ -126,7 +150,7 @@ public class UsersServiceTests
     [Test]
     public async Task GeneratePasswordResetToken_ReturnsToken()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(user)).ReturnsAsync(user);
         usersRepositoryMock.Setup(repo => repo.GetUserByEmail(user.Email)).ReturnsAsync(user);
@@ -141,7 +165,7 @@ public class UsersServiceTests
     [Test]
     public async Task UpdatePassword_ValidToken_UpdatesPasswordSuccessfully()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
         var updatePassword = UpdatePasswordTemplate("valid-token", "New@Password-123", "New@Password-123");
         var passwordResetToken = new PasswordResetToken { Token = updatePassword.Token, User = user };
 
@@ -208,7 +232,7 @@ public class UsersServiceTests
     [Test]
     public async Task UpdateUser_UpdatesSuccessfully()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
         var updateUser = UpdateUserTemplate(user.Id, "userupdated@email.com");
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(user)).ReturnsAsync(user);
@@ -225,6 +249,7 @@ public class UsersServiceTests
             Assert.That(result.Name, Is.EqualTo(updateUser.Name));
             Assert.That(result.Email, Is.EqualTo(updateUser.Email));
             Assert.That(result.Balance, Is.EqualTo(updateUser.Balance));
+            Assert.That(result.IsMentor, Is.EqualTo(updateUser.IsMentor));
         });
     }
 
@@ -233,7 +258,7 @@ public class UsersServiceTests
     {
         var userId = Guid.NewGuid();
 
-        var existingUser = CreateUserTemplate();
+        var existingUser = CreateUserTemplate()[0];
         existingUser.Id = userId;
         existingUser.Email = "user1@email.com";
 
@@ -255,7 +280,7 @@ public class UsersServiceTests
     [Test]
     public async Task UpdateBalance_UpdatesSuccessfully()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
         var newBalance = 199.99m;
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(user)).ReturnsAsync(user);
@@ -273,7 +298,7 @@ public class UsersServiceTests
     [Test]
     public void UpdateBalance_ReturnsBadRequest_WhenBalanceIsNegative()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
         var newBalance = -199.99m;
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(user)).ReturnsAsync(user);
@@ -291,7 +316,7 @@ public class UsersServiceTests
     [Test]
     public async Task DeleteUser_DeletesSuccessfully()
     {
-        var user = CreateUserTemplate();
+        var user = CreateUserTemplate()[0];
 
         usersRepositoryMock.Setup(repo => repo.CreateUser(user)).ReturnsAsync(user);
         usersRepositoryMock.Setup(repo => repo.DeleteUser(user.Id)).Returns(Task.CompletedTask);
@@ -311,15 +336,19 @@ public class UsersServiceTests
 
     #region Private Method
 
-    private static Users CreateUserTemplate()
+    private static List<Users> CreateUserTemplate()
     {
-        return new Users()
+        return new List<Users>()
         {
-            Id = Guid.NewGuid(),
-            Name = "User Test",
-            Email = "usertest@gmail.com",
-            Password = PasswordHasher.HashPassword("User@Test-123"),
-            Balance = 149.99m
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "User Test",
+                Email = "usertest@gmail.com",
+                Password = PasswordHasher.HashPassword("User@Test-123"),
+                Balance = 149.99m,
+                IsMentor = true
+            }
         };
     }
 
@@ -331,7 +360,8 @@ public class UsersServiceTests
             Name = name,
             Email = email,
             Password = PasswordHasher.HashPassword(password),
-            Balance = balance
+            Balance = balance,
+            IsMentor = true
         };
     }
 
@@ -353,7 +383,8 @@ public class UsersServiceTests
             Name = "User Updated",
             Email = email,
             Password = PasswordHasher.HashPassword("User@Updated-123"),
-            Balance = 199.99m
+            Balance = 199.99m,
+            IsMentor = false
         };
     }
 

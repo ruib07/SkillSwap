@@ -26,6 +26,11 @@ public class UsersRepository : IUsersRepository
         return await Users.FirstOrDefaultAsync(u => u.Email == email);
     }
 
+    public async Task<List<Users>> GetMentors()
+    {
+        return await Users.Where(u => u.IsMentor).ToListAsync();
+    }
+
     public async Task<Users> CreateUser(Users user)
     {
         await Users.AddAsync(user);

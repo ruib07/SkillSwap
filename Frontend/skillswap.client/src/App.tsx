@@ -13,8 +13,10 @@ import Authentication from "./pages/Login";
 import RecoverPasswordEmail from "./components/PasswordRecovery/EmailToRecoverPassword";
 import RecoverPasswordUpdate from "./components/PasswordRecovery/ChangePassword";
 
+import Skills from "./pages/Skills";
 import SkillDetails from "./components/Skills/SkillDetails";
 import SkillCreation from "./components/Skills/CreateSkill";
+import Mentors from "./pages/Mentors";
 
 export default function App() {
     return (
@@ -38,8 +40,10 @@ export default function App() {
                         <Route path="/Authentication/Login" element={<Authentication />} />
                         <Route path="/RecoverPassword/SendEmail" element={<RecoverPasswordEmail />} />
                         <Route path="/RecoverPassword/ChangePassword" element={<RecoverPasswordUpdate />} />
+                        <Route path="/Skills" element={<Skills /> } />
                         <Route path="/Skill/:skillId" element={<SkillDetails /> } />
-                        <Route path="/Skills/Create" element={<SkillCreation /> } />
+                        <Route path="/Skills/Create" element={<SkillCreation />} />
+                        <Route path="/Mentors" element={<Mentors /> } />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                 </div>
