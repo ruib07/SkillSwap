@@ -1,13 +1,18 @@
 import { useParams } from "react-router-dom";
 import { ISkill } from "../../types/skill";
+import { IUserSkill } from "../../types/userSkill";
 import { useEffect, useState } from "react";
 import { GetSkillById } from "../../services/skillsService";
+import { showToast } from "../../utils/toastHelper";
+import { AddSkillToUser } from "../../services/userSkillsService";
 import Header from "../../layouts/Header";
 
 export default function SkillDetails() {
     const { skillId } = useParams<{ skillId: string }>();
     const [skill, setSkill] = useState<ISkill | null>(null);
     const [, setError] = useState<string | null>(null);
+
+    const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
 
     useEffect(() => {
         const fetchSkill = async () => {
@@ -22,6 +27,20 @@ export default function SkillDetails() {
 
         fetchSkill();
     }, [skillId]);
+
+    const handleAddSkillToUser = async () => {
+        const newSkillToUser: IUserSkill = {
+            userId: userId!,
+            skillId: skillId!
+        }
+
+        try {
+            await AddSkillToUser(newSkillToUser);
+            showToast("Skill added successfully!", "success");
+        } catch {
+            showToast("Skill was not added!", "error");
+        }
+    }
 
     if (!skill) {
         return (
@@ -52,7 +71,9 @@ export default function SkillDetails() {
                         </div>
 
                         <div className="mt-8 flex justify-center">
-                            <button className="px-6 py-2 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 cursor-pointer">
+                            <button
+                                onClick={() => handleAddSkillToUser()}
+                                className="px-6 py-2 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 cursor-pointer">
                                 Add Skill to your stack
                             </button>
                         </div>
