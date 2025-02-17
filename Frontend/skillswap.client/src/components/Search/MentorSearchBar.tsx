@@ -25,7 +25,7 @@ export default function SkillSearchBar({ mentors, setFilteredMentors }: IMentorS
                 onChange={handleSearch}
             />
             <a
-                href="/Mentors/Create"
+                href="/Mentorship/Create"
                 className="flex items-center justify-center bg-blue-500 text-gray-200 px-4 py-2 rounded-md hover:bg-blue-600 transition"
             >
                 <svg
@@ -42,7 +42,7 @@ export default function SkillSearchBar({ mentors, setFilteredMentors }: IMentorS
                         d="M12 4v16m8-8H4"
                     />
                 </svg>
-                Mentor
+                Mentorship
             </a>
         </div>
     );

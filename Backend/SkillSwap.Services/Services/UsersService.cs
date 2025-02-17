@@ -13,6 +13,14 @@ public class UsersService
         _usersRepository = usersRepository;
     }
 
+    public async Task<List<Users>> GetUsers()
+    {
+        var users = await _usersRepository.GetUsers();
+        if (users == null) ErrorHelper.ThrowNotFoundException("No users found.");
+
+        return users;
+    }
+
     public async Task<Users> GetUserById(Guid id)
     {
         var user = await _usersRepository.GetUserById(id);

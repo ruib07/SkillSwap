@@ -23,6 +23,14 @@ public class UsersController : ControllerBase
         _emailService = emailService;
     }
 
+    // GET users
+    [HttpGet]
+    public async Task<ActionResult<List<Users>>> GetUsers()
+    {
+        var users = await _usersService.GetUsers();
+        return Ok(users);
+    }
+
     // GET users/{id}
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(Guid id)

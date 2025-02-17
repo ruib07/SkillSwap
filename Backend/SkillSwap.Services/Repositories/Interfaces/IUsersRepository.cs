@@ -4,6 +4,7 @@ namespace SkillSwap.Services.Repositories.Interfaces;
 
 public interface IUsersRepository
 {
+    Task<List<Users>> GetUsers();
     Task<Users> GetUserById(Guid id);
     Task<Users> GetUserByEmail(string email);
     Task<List<Users>> GetMentors();

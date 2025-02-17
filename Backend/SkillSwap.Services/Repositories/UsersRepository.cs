@@ -16,6 +16,11 @@ public class UsersRepository : IUsersRepository
         _context = context;
     }
 
+    public async Task<List<Users>> GetUsers()
+    {
+        return await Users.ToListAsync();
+    }
+
     public async Task<Users> GetUserById(Guid id)
     {
         return await Users.FirstOrDefaultAsync(u => u.Id == id);

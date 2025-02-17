@@ -12,7 +12,6 @@
     <None Remove="public\assets\icons\CodingIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\components\Mentorships\" />
     <Folder Include="src\components\Payments\" />
   </ItemGroup>
 </Project>

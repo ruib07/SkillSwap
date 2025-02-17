@@ -11,14 +11,18 @@ import {
 import Icon from "/assets/SkillSwap-Logo.png";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useNavigate, useLocation } from "react-router-dom";
+import { profileNavigation } from "../data/navigation";
 import { GetUserById } from "../services/usersService";
-import { navigation } from "../data/navigation";
+
 function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
 }
 
-export default function Header() {
-    const [userData, setUserData] = useState<{ name: string; profilePicture: string; } | null>(null);
+export default function ProfileHeader() {
+    const [userData, setUserData] = useState<{
+        name: string;
+        profilePicture: string;
+    } | null>(null);
     const [, setError] = useState<string | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -35,15 +39,8 @@ export default function Header() {
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-            const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
-
-            if (!token || !userId) {
-                setUserData(null);
-                return;
-            }
-
             try {
+                const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
                 const response = await GetUserById(userId!);
                 const { name, profilePicture } = response.data;
                 setUserData({ name, profilePicture });
@@ -57,7 +54,10 @@ export default function Header() {
 
     const handleSignOut = () => {
         localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         localStorage.removeItem("userId");
+        sessionStorage.removeItem("userId");
+
         setUserData(null);
         navigate("/");
         window.location.reload();
@@ -75,6 +75,8 @@ export default function Header() {
                 <div className="relative flex h-16 items-center justify-between">
                     <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                         <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-100 hover:text-purple-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                            <span className="absolute -inset-0.5" />
+                            <span className="sr-only">Open main menu</span>
                             <Bars3Icon
                                 aria-hidden="true"
                                 className="block h-6 w-6 group-data-[open]:hidden"
@@ -93,9 +95,9 @@ export default function Header() {
                         </div>
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
-                                {navigation.map((item) => {
-                                    const isProject = item.name === "Projects";
-                                    const isAccessible = isProject || userData;
+                                {profileNavigation.map((item) => {
+                                    const isSkill = item.name === "Skills";
+                                    const isAccessible = isSkill || userData;
 
                                     return (
                                         <a
@@ -108,7 +110,7 @@ export default function Header() {
                                                 location.pathname === item.href
                                                     ? "text-blue-500"
                                                     : isAccessible
-                                                        ? "text-gray-200 hover:text-blue-500 hover:underline"
+                                                        ? "text-gray-200 hover:text-blue-500"
                                                         : "text-gray-200 cursor-not-allowed",
                                                 "rounded-md px-3 py-2 text-sm font-medium"
                                             )}
@@ -124,10 +126,10 @@ export default function Header() {
                         </div>
                     </div>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                        {userData ? (
+                        {userData && (
                             <Menu as="div" className="relative ml-3">
                                 <div>
-                                    <MenuButton className="flex items-center cursor-pointer text-sm text-gray-200">
+                                    <MenuButton className="flex items-center text-sm text-gray-200">
                                         <img
                                             alt="UserIcon"
                                             src={
@@ -139,46 +141,17 @@ export default function Header() {
                                         <span className="ms-2 mr-2">Hi, {userData.name}</span>
                                     </MenuButton>
                                 </div>
-                                <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-gray-600 ring-opacity-5 focus:outline-none">
-                                    <MenuItem>
-                                        <a
-                                            href="/MyInfo"
-                                            className="block hover:bg-gray-600 px-4 py-2 text-sm text-gray-300"
-                                        >
-                                            Your Profile
-                                        </a>
-                                    </MenuItem>
+                                <MenuItems
+                                    transition
+                                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-200 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                >
                                     <MenuItem>
                                         <button
                                             onClick={handleSignOut}
-                                            className="block w-full hover:bg-gray-600 text-left px-4 py-2 text-sm text-gray-300"
+                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700"
                                         >
                                             Sign out
                                         </button>
-                                    </MenuItem>
-                                </MenuItems>
-                            </Menu>
-                        ) : (
-                            <Menu as="div" className="relative ml-3">
-                                <MenuButton className="text-white text-sm cursor-pointer">
-                                    Authentication
-                                </MenuButton>
-                                <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-gray-600 ring-opacity-5 focus:outline-none">
-                                        <MenuItem>
-                                        <a
-                                            href="/Authentication/Login"
-                                                className="block hover:bg-gray-600 px-4 py-2 text-sm text-gray-300"
-                                        >
-                                            Login
-                                        </a>
-                                    </MenuItem>
-                                    <MenuItem>
-                                        <a
-                                            href="/Authentication/Registration"
-                                                className="block hover:bg-gray-600 px-4 py-2 text-sm text-gray-300"
-                                        >
-                                            Registration
-                                        </a>
                                     </MenuItem>
                                 </MenuItems>
                             </Menu>
@@ -189,7 +162,7 @@ export default function Header() {
 
             <DisclosurePanel className="sm:hidden">
                 <div className="space-y-1 px-2 pb-3 pt-2">
-                    {navigation.map((item) => (
+                    {profileNavigation.map((item) => (
                         <DisclosureButton
                             key={item.name}
                             as="a"
