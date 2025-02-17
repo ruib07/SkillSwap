@@ -20,6 +20,11 @@ public class UserSkillsService
         return await _userSkillsRepository.GetUserSkillsByUser(userId);
     }
 
+    public async Task<bool> UserHasSkill(Guid userId, Guid skillId)
+    {
+        return await _userSkillsRepository.UserHasSkill(userId, skillId);
+    }
+
     public async Task CreateUserSkill(Guid userId, Guid skillId)
     {
         if (!await _userSkillsRepository.UserExists(userId))

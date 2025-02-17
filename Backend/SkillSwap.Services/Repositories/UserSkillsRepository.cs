@@ -26,6 +26,13 @@ public class UserSkillsRepository : IUserSkillsRepository
         return user.Skills.ToList();
     }
 
+    public async Task<bool> UserHasSkill(Guid userId, Guid skillId)
+    {
+        var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
+
+        return user?.Skills?.Any(s => s.Id == skillId) ?? false;
+    }
+
     public async Task<bool> UserExists(Guid userId)
     {
         return await Users.AnyAsync(u => u.Id == userId);

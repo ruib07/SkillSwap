@@ -49,6 +49,48 @@ public class UserSkillsControllerTests
     }
 
     [Test]
+    public async Task UserHasSkill_ReturnsTrue_WhenUserHasSkill()
+    {
+        var userId = Guid.NewGuid();
+        var skill = CreateSkillsTemplate()[0];
+
+        userSkillsRepositoryMock.Setup(repo => repo.UserHasSkill(userId, skill.Id)).ReturnsAsync(true);
+
+        var result = await userSkillsController.UserHasSkill(userId, skill.Id);
+        var okResult = result.Result as OkObjectResult;
+        var response = okResult.Value as bool?;
+
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(response, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(okResult.StatusCode, Is.EqualTo(200));
+            Assert.That(response, Is.True);
+        });
+    }
+
+    [Test]
+    public async Task UserHasSkill_ReturnsFalse_WhenUserDontHaveSkill()
+    {
+        var userId = Guid.NewGuid();
+        var skill = Guid.NewGuid();
+
+        userSkillsRepositoryMock.Setup(repo => repo.UserHasSkill(userId, skill)).ReturnsAsync(false);
+
+        var result = await userSkillsController.UserHasSkill(userId, skill);
+        var okResult = result.Result as OkObjectResult;
+        var response = okResult.Value as bool?;
+
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(response, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(okResult.StatusCode, Is.EqualTo(200));
+            Assert.That(response, Is.False);
+        });
+    }
+
+    [Test]
     public async Task CreateUserSkill_ReturnsCreatedResult_WithValidUserSkill()
     {
         var userSkillDto = CreateUserSkillDTOTemplate();

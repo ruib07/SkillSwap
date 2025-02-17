@@ -30,6 +30,26 @@ public class UsersControllerTests
     }
 
     [Test]
+    public async Task GetUsers_ReturnsOkResult_WithListOfUsers()
+    {
+        var usersList = CreateUserTemplate();
+
+        usersRepositoryMock.Setup(repo => repo.GetUsers()).ReturnsAsync(usersList);
+
+        var result = await usersController.GetUsers();
+        var okResult = result.Result as OkObjectResult;
+        var response = okResult.Value as List<Users>;
+
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(response, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(okResult.StatusCode, Is.EqualTo(200));
+            Assert.That(response, Has.Count.EqualTo(1));
+        });
+    }
+
+    [Test]
     public async Task GetUserById_ReturnsOkResult_WithUser()
     {
         var mockUser = CreateUserTemplate()[0];

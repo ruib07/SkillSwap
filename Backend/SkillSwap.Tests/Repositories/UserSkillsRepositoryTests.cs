@@ -52,6 +52,38 @@ public class UserSkillsRepositoryTests
     }
 
     [Test]
+    public async Task UserHasSkill_ReturnsTrue_WhenUserHasSkill()
+    {
+        var user = CreateUserTemplate();
+        var skill = CreateSkillTemplate()[0];
+
+        user.Skills.Add(skill);  
+        context.Users.Add(user);
+        context.Skills.Add(skill);
+        await context.SaveChangesAsync();
+
+        var trueResponse = await userSkillsRepository.UserHasSkill(user.Id, skill.Id);
+
+        Assert.That(trueResponse, Is.True); 
+    }
+
+    [Test]
+    public async Task UserHasSkill_ReturnsFalse_WhenUserDontHaveSkill()
+    {
+        var user = CreateUserTemplate();
+        var skill = CreateSkillTemplate()[0];
+
+        context.Users.Add(user);
+        context.Skills.Add(skill);
+        await context.SaveChangesAsync();
+
+        var falseResponse = await userSkillsRepository.UserHasSkill(user.Id, skill.Id);
+
+        Assert.That(falseResponse, Is.False);
+
+    }
+
+    [Test]
     public async Task UserExists_ReturnsTrue_WhenUserExists()
     {
         var user = CreateUserTemplate();

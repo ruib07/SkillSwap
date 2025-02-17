@@ -48,6 +48,36 @@ public class UserSkillsServiceTests
     }
 
     [Test]
+    public async Task UserHasSkill_ReturnsTrue()
+    {
+        var user = CreateUserTemplate();
+        var skill = CreateSkillTemplate()[0];
+
+        usersRepositoryMock.Setup(repo => repo.CreateUser(user)).ReturnsAsync(user);
+        skillsRepositoryMock.Setup(repo => repo.CreateSkill(skill)).ReturnsAsync(skill);
+        userSkillsRepositoryMock.Setup(repo => repo.UserHasSkill(user.Id, skill.Id)).ReturnsAsync(true);
+
+        var result = await userSkillsService.UserHasSkill(user.Id, skill.Id);
+
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public async Task UserHasSkill_ReturnsFalse()
+    {
+        var user = CreateUserTemplate();
+        var skill = CreateSkillTemplate()[0];
+
+        usersRepositoryMock.Setup(repo => repo.CreateUser(user)).ReturnsAsync(user);
+        skillsRepositoryMock.Setup(repo => repo.CreateSkill(skill)).ReturnsAsync(skill);
+        userSkillsRepositoryMock.Setup(repo => repo.UserHasSkill(user.Id, skill.Id)).ReturnsAsync(false);
+
+        var result = await userSkillsService.UserHasSkill(user.Id, skill.Id);
+
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
     public async Task CreateUserSkill_CreatesSuccessfully()
     {
         var user = CreateUserTemplate();

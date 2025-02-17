@@ -16,8 +16,10 @@ import RecoverPasswordUpdate from "./components/PasswordRecovery/ChangePassword"
 import Skills from "./pages/Skills";
 import SkillDetails from "./components/Skills/SkillDetails";
 import SkillCreation from "./components/Skills/CreateSkill";
+
 import Mentors from "./pages/Mentors";
 import NewMentorshipRequest from "./components/Mentorships/CreateMentorshipRequest";
+
 import MyInformation from "./components/Profile/UserInformation";
 
 export default function App() {
@@ -45,14 +47,14 @@ export default function App() {
                         <Route path="/RecoverPassword/SendEmail" element={<RecoverPasswordEmail />} />
                         <Route path="/RecoverPassword/ChangePassword" element={<RecoverPasswordUpdate />} />
 
-                        <Route path="/Skills" element={<Skills /> } />
-                        <Route path="/Skill/:skillId" element={<SkillDetails /> } />
+                        <Route path="/Skills" element={<Skills />} />
+                        <Route path="/Skill/:skillId" element={<SkillDetails />} />
                         <Route path="/Skills/Create" element={<SkillCreation />} />
 
                         <Route path="/Mentors" element={<Mentors />} />
                         <Route path="/Mentorship/Create" element={<NewMentorshipRequest />} />
 
-                        <Route path="/MyInfo" element={<MyInformation /> } />
+                        <Route path="/MyInfo" element={<MyInformation />} />
                     </Routes>
                 </div>
             </div>

@@ -4,7 +4,6 @@ using SkillSwap.Services.Helpers;
 using SkillSwap.Services.Repositories.Interfaces;
 using SkillSwap.Services.Services;
 using System.Net;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using static SkillSwap.Server.Models.RecoverPassword;
 
 namespace SkillSwap.Tests.Services;
@@ -20,6 +19,25 @@ public class UsersServiceTests
     {
         usersRepositoryMock = new Mock<IUsersRepository>();
         usersService = new UsersService(usersRepositoryMock.Object);
+    }
+
+    [Test]
+    public async Task GetUsers_ReturnsUsers()
+    {
+        var users = CreateUserTemplate();
+
+        usersRepositoryMock.Setup(repo => repo.GetUsers()).ReturnsAsync(users);
+
+        var result = await usersService.GetUsers();
+
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.That(result[0].Id, Is.EqualTo(users[0].Id));
+            Assert.That(result[0].Name, Is.EqualTo(users[0].Name));
+            Assert.That(result[0].Email, Is.EqualTo(users[0].Email));
+        });
     }
 
     [Test]

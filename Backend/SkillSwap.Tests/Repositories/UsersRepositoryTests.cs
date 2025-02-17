@@ -30,6 +30,24 @@ public class UsersRepositoryTests
     }
 
     [Test]
+    public async Task GetUsers_ReturnsListOfUsers()
+    {
+        var usersList = CreateUserTemplate();
+        context.Users.AddRange(usersList);
+        await context.SaveChangesAsync();
+
+        var result = await usersRepository.GetUsers();
+
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.That(result[0].Id, Is.EqualTo(usersList[0].Id));
+            Assert.That(result[0].Name, Is.EqualTo(usersList[0].Name));
+        });
+    }
+
+    [Test]
     public async Task GetUserById_ReturnsUser()
     {
         var user = CreateUserTemplate()[0];

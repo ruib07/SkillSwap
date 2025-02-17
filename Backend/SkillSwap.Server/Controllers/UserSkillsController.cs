@@ -27,6 +27,15 @@ public class UserSkillsController : ControllerBase
         return Ok(userSkills);
     }
 
+    // GET user-skills/hasskill/{userId}/{skillId}
+    [Authorize(Policy = ApiConstants.PolicyUser)]
+    [HttpGet("hasskill/{userId}/{skillId}")]
+    public async Task<ActionResult<bool>> UserHasSkill(Guid userId, Guid skillId)
+    {
+        var hasSkill = await _userSkills.UserHasSkill(userId, skillId);
+        return Ok(hasSkill);
+    }
+
     // POST user-skills
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpPost]
