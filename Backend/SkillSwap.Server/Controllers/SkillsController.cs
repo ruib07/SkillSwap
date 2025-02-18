@@ -35,6 +35,8 @@ public class SkillsController : ControllerBase
         return Ok(skill);
     }
 
+    // TODO Get skills by user
+
     // POST skills
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpPost]

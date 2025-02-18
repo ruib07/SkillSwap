@@ -57,7 +57,10 @@ export default function Header() {
 
     const handleSignOut = () => {
         localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         localStorage.removeItem("userId");
+        sessionStorage.removeItem("userId");
+
         setUserData(null);
         navigate("/");
         window.location.reload();
@@ -93,33 +96,22 @@ export default function Header() {
                         </div>
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
-                                {navigation.map((item) => {
-                                    const isProject = item.name === "Projects";
-                                    const isAccessible = isProject || userData;
-
-                                    return (
+                                {navigation
+                                    .filter(item => !item.requiresAuth || userData)
+                                    .map((item) => (
                                         <a
                                             key={item.name}
-                                            href={isAccessible ? item.href : "#"}
-                                            aria-current={
-                                                location.pathname === item.href ? "page" : undefined
-                                            }
+                                            href={item.href}
                                             className={classNames(
                                                 location.pathname === item.href
                                                     ? "text-blue-500"
-                                                    : isAccessible
-                                                        ? "text-gray-200 hover:text-blue-500 hover:underline"
-                                                        : "text-gray-200 cursor-not-allowed",
+                                                    : "text-gray-200 hover:text-blue-500 hover:underline",
                                                 "rounded-md px-3 py-2 text-sm font-medium"
                                             )}
-                                            onClick={(e) => {
-                                                if (!isAccessible) e.preventDefault();
-                                            }}
                                         >
                                             {item.name}
                                         </a>
-                                    );
-                                })}
+                                    ))}
                             </div>
                         </div>
                     </div>

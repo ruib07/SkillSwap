@@ -1,3 +1,17 @@
+export enum MentorshipRequestsStatus {
+    Pending = 0,
+    Accepted = 1,
+    Completed = 2,
+    Cancelled = 3
+}
+
+export const mentorshipStatusMap: { [key: number]: string } = {
+    [MentorshipRequestsStatus.Pending]: "Pending",
+    [MentorshipRequestsStatus.Accepted]: "Accepted",
+    [MentorshipRequestsStatus.Completed]: "Completed",
+    [MentorshipRequestsStatus.Cancelled]: "Cancelled"
+};
+
 export interface IMentorshipRequest {
     id?: string;
     mentorId: string;

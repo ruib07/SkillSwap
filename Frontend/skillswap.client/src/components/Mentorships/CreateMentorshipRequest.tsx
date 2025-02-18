@@ -4,82 +4,76 @@ import { showToast } from "../../utils/toastHelper";
 import Img from "/assets/SkillSwap-Logo.png";
 import { IMentorshipRequest } from "../../types/mentorshipRequest";
 import { CreateMentorshipRequest } from "../../services/mentorshipRequestsService";
-import { GetMentors, GetUsers } from "../../services/usersService";
+import { GetMentors, GetUsers, GetUserById } from "../../services/usersService";
 import { GetAllSkills } from "../../services/skillsService";
 
 export default function NewMentorshipRequest() {
     const [mentorId, setMentorId] = useState("");
     const [learnerId, setLearnerId] = useState("");
     const [skillId, setSkillId] = useState("");
-    const [status, setStatus] = useState<number>(0);
     const [scheduledAt, setScheduledAt] = useState("");
     const [, setError] = useState<string | null>(null);
     const [mentors, setMentors] = useState<{ id: string; name: string }[]>([]);
-    const [filteredMentors, setFilteredMentors] = useState(mentors);
     const [learners, setLearners] = useState<{ id: string; name: string }[]>([]);
-    const [filteredLearners, setFilteredLearners] = useState(learners);
     const [skills, setSkills] = useState<{ id: string; name: string }[]>([]);
-    const [filteredSkills, setFilteredSkills] = useState(skills);
     const [isDropdownMentorVisible, setIsDropdownMentorVisible] = useState(false);
     const [isDropdownUserVisible, setIsDropdownUserVisible] = useState(false);
     const [isDropdownSkillVisible, setIsDropdownSkillVisible] = useState(false);
+    const [userIsMentor, setUserIsMentor] = useState(false);
     const navigate = useNavigate();
 
+    const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
+
     useEffect(() => {
-        const fetchMentors = async () => {
+        const fetchData = async () => {
             try {
                 const mentorsResponse = await GetMentors();
                 const mentorsArray = mentorsResponse.data.$values || [];
                 setMentors(mentorsArray);
-                setFilteredMentors(mentorsArray);
-            } catch {
-                setError("Failed to load mentors.");
-            }
-        };
 
-        const fetchLearners = async () => {
-            try {
-                const learnersResponse = await GetUsers();
-                const usersArray = learnersResponse.data.$values || [];
-                const learnersOnly = usersArray.filter((user: any) => !user.isMentor);
-                setLearners(learnersOnly);
-                setFilteredLearners(learnersOnly);
-            } catch {
-                setError("Failed to load users.");
-            }
-        };
+                const usersResponse = await GetUsers();
+                const usersArray = usersResponse.data.$values || [];
+                setLearners(usersArray.filter((user: any) => !user.isMentor));
 
-        const fetchSkills = async () => {
-            try {
                 const skillsResponse = await GetAllSkills();
                 const skillsArray = skillsResponse.data.$values || [];
                 setSkills(skillsArray);
-                setFilteredSkills(skillsArray);
+
+                if (userId) {
+                    const userResponse = await GetUserById(userId);
+                    setUserIsMentor(userResponse.data.isMentor);
+                }
             } catch {
-                setError("Failed to load skills.");
+                setError("Failed to load data.");
             }
         };
 
-        fetchMentors();
-        fetchLearners();
-        fetchSkills();
-    }, []);
+        fetchData();
+    }, [userId]);
 
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
 
         const newMentorshipRequest: IMentorshipRequest = {
-            mentorId,
-            learnerId,
+            mentorId: "",
+            learnerId: "",
             skillId,
-            status,
+            status: 0,
             scheduledAt,
         };
+
+        if (userIsMentor) {
+            newMentorshipRequest.mentorId = userId || "";
+            newMentorshipRequest.learnerId = learnerId; 
+        } else {
+            newMentorshipRequest.mentorId = mentorId;
+            newMentorshipRequest.learnerId = userId || "";
+        }
 
         try {
             await CreateMentorshipRequest(newMentorshipRequest);
             showToast("Request completed successfully!", "success");
-            navigate("/");
+            navigate("/MentorshipRequests");
         } catch {
             showToast("Request was not completed!", "error");
         }
@@ -89,39 +83,39 @@ export default function NewMentorshipRequest() {
         setMentorId(search);
 
         if (!search) {
-            setFilteredMentors(mentors);
+            setMentors(mentors);
         }
 
         const filteredMentors = mentors.filter((mentor) =>
             mentor.name.toLowerCase().includes(search.toLowerCase())
         );
-        setFilteredMentors(filteredMentors);
+        setMentors(filteredMentors);
     };
 
     const handleLearnersSearch = (search: string) => {
         setLearnerId(search);
 
         if (!search) {
-            setFilteredLearners(learners);
+            setLearners(learners);
         }
 
         const filteredLearners = learners.filter((learner) =>
             learner.name.toLowerCase().includes(search.toLowerCase())
         );
-        setFilteredMentors(filteredLearners);
+        setLearners(filteredLearners);
     };
 
     const handleSkillsSearch = (search: string) => {
         setSkillId(search);
 
         if (!search) {
-            setFilteredSkills(skills);
+            setSkills(skills);
         }
 
         const filteredSkills = skills.filter((skill) =>
             skill.name.toLowerCase().includes(search.toLowerCase())
         );
-        setFilteredSkills(filteredSkills);
+        setSkills(filteredSkills);
     };
 
     return (
@@ -135,58 +129,24 @@ export default function NewMentorshipRequest() {
                             Create mentorship request
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={handleRegister}>
-                            <div>
-                                <label className="block mb-2 text-sm font-medium text-gray-300">Mentor *</label>
-                                <input
-                                    type="text"
-                                    className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
-                                    placeholder="Search for mentor"
-                                    required
-                                    value={mentorId}
-                                    onChange={(e) => handleMentorsSearch(e.target.value)}
-                                    onFocus={() => setIsDropdownMentorVisible(true)}
-                                    onBlur={() =>
-                                        setTimeout(() => setIsDropdownMentorVisible(false), 200)
-                                    }
-                                />
-                                <div className="relative">
-                                    {isDropdownMentorVisible && filteredMentors.length > 0 && (
+                            {userIsMentor ? (
+                                <div>
+                                    <label className="block mb-2 text-sm font-medium text-gray-300">Learner *</label>
+                                    <input
+                                        type="text"
+                                        className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
+                                        placeholder="Search for learner"
+                                        required
+                                        value={learnerId}
+                                        onChange={(e) => handleLearnersSearch(e.target.value)}
+                                        onFocus={() => setIsDropdownUserVisible(true)}
+                                        onBlur={() =>
+                                            setTimeout(() => setIsDropdownUserVisible(false), 200)
+                                        }
+                                    />
+                                    {isDropdownUserVisible && learners.length > 0 && (
                                         <div className="absolute z-10 bg-gray-800 text-white border rounded-md w-full mt-1 max-h-40 overflow-y-auto shadow-lg">
-                                            {filteredMentors.map((mentor) => (
-                                                <div
-                                                    key={mentor.id}
-                                                    className="px-4 py-2 cursor-pointer hover:bg-gray-700"
-                                                    onClick={() => {
-                                                        setMentorId(mentor.id);
-                                                        setIsDropdownMentorVisible(false);
-                                                    }}
-                                                >
-                                                    {mentor.name}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block mb-2 text-sm font-medium text-gray-300">Learner *</label>
-                                <input
-                                    type="text"
-                                    className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
-                                    placeholder="Search for learner"
-                                    required
-                                    value={learnerId}
-                                    onChange={(e) => handleLearnersSearch(e.target.value)}
-                                    onFocus={() => setIsDropdownUserVisible(true)}
-                                    onBlur={() =>
-                                        setTimeout(() => setIsDropdownUserVisible(false), 200)
-                                    }
-                                />
-                                <div className="relative">
-                                    {isDropdownUserVisible && filteredLearners.length > 0 && (
-                                        <div className="absolute z-10 bg-gray-800 text-white border rounded-md w-full mt-1 max-h-40 overflow-y-auto shadow-lg">
-                                            {filteredLearners.map((learner) => (
+                                            {learners.map((learner) => (
                                                 <div
                                                     key={learner.id}
                                                     className="px-4 py-2 cursor-pointer hover:bg-gray-700"
@@ -201,7 +161,40 @@ export default function NewMentorshipRequest() {
                                         </div>
                                     )}
                                 </div>
-                            </div>
+                            ) : (
+                                <div>
+                                    <label className="block mb-2 text-sm font-medium text-gray-300">Mentor *</label>
+                                    <input
+                                        type="text"
+                                        className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
+                                        placeholder="Search for mentor"
+                                        required
+                                        value={mentorId}
+                                        onChange={(e) => handleMentorsSearch(e.target.value)}
+                                        onFocus={() => setIsDropdownMentorVisible(true)}
+                                        onBlur={() =>
+                                            setTimeout(() => setIsDropdownMentorVisible(false), 200)
+                                        }
+                                    />
+                                    {isDropdownMentorVisible && mentors.length > 0 && (
+                                        <div className="absolute z-10 bg-gray-800 text-white border rounded-md w-full mt-1 max-h-40 overflow-y-auto shadow-lg">
+                                            {mentors.map((mentor) => (
+                                                <div
+                                                    key={mentor.id}
+                                                    className="px-4 py-2 cursor-pointer hover:bg-gray-700"
+                                                    onClick={() => {
+                                                        setMentorId(mentor.id);
+                                                        setIsDropdownMentorVisible(false);
+                                                    }}
+                                                >
+                                                    {mentor.name}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
 
                             <div>
                                 <label className="block mb-2 text-sm font-medium text-gray-300">Skill *</label>
@@ -217,39 +210,22 @@ export default function NewMentorshipRequest() {
                                         setTimeout(() => setIsDropdownSkillVisible(false), 200)
                                     }
                                 />
-                                <div className="relative">
-                                    {isDropdownSkillVisible && filteredSkills.length > 0 && (
-                                        <div className="absolute z-10 bg-gray-800 text-white border rounded-md w-full mt-1 max-h-40 overflow-y-auto shadow-lg">
-                                            {filteredSkills.map((skill) => (
-                                                <div
-                                                    key={skill.id}
-                                                    className="px-4 py-2 cursor-pointer hover:bg-gray-700"
-                                                    onClick={() => {
-                                                        setSkillId(skill.id);
-                                                        setIsDropdownSkillVisible(false);
-                                                    }}
-                                                >
-                                                    {skill.name}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block mb-2 text-sm font-medium text-gray-300">Status *</label>
-                                <select
-                                    className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5 pr-10"
-                                    value={status}
-                                    onChange={(e) => setStatus(Number(e.target.value))}
-                                    required
-                                >
-                                    <option value="0">Pending</option>
-                                    <option value="1">Accepted</option>
-                                    <option value="2">Completed</option>
-                                    <option value="3">Cancelled</option>
-                                </select>
+                                {isDropdownSkillVisible && skills.length > 0 && (
+                                    <div className="absolute z-10 bg-gray-800 text-white border rounded-md w-full mt-1 max-h-40 overflow-y-auto shadow-lg">
+                                        {skills.map((skill) => (
+                                            <div
+                                                key={skill.id}
+                                                className="px-4 py-2 cursor-pointer hover:bg-gray-700"
+                                                onClick={() => {
+                                                    setSkillId(skill.id);
+                                                    setIsDropdownSkillVisible(false);
+                                                }}
+                                            >
+                                                {skill.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             <div>

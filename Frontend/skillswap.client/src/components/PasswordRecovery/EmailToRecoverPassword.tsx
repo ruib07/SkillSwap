@@ -20,7 +20,7 @@ export default function RecoverPasswordEmail() {
     return (
         <div className="flex min-h-full flex-1 justify-center px-6 py-12 lg:px-8">
             <div className="relative w-full max-w-lg">
-                <img alt="CreativeHub" src={Img} className="mx-auto h-12 w-auto" /><br />
+                <img alt="SkillSwap" src={Img} className="mx-auto h-12 w-auto" /><br />
 
                 <div className="w-full bg-gray-800 max-w-lg border border-gray-600 rounded-lg shadow">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

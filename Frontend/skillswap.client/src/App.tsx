@@ -18,6 +18,7 @@ import SkillDetails from "./components/Skills/SkillDetails";
 import SkillCreation from "./components/Skills/CreateSkill";
 
 import Mentors from "./pages/Mentors";
+import MentorshipRequests from "./pages/MentorshipRequests";
 import NewMentorshipRequest from "./components/Mentorships/CreateMentorshipRequest";
 
 import MyInformation from "./components/Profile/UserInformation";
@@ -52,6 +53,7 @@ export default function App() {
                         <Route path="/Skills/Create" element={<SkillCreation />} />
 
                         <Route path="/Mentors" element={<Mentors />} />
+                        <Route path="/MentorshipRequests" element={<MentorshipRequests /> } />
                         <Route path="/Mentorship/Create" element={<NewMentorshipRequest />} />
 
                         <Route path="/MyInfo" element={<MyInformation />} />
