@@ -119,66 +119,30 @@ public class UserSkillsControllerTests
     [Test]
     public async Task DeleteUserSkill_ReturnsNoContent_WhenUserSkillIsDeleted()
     {
-        // Criamos IDs fixos
         var userId = Guid.NewGuid();
-        var skillId = Guid.NewGuid();
+        var skill = CreateSkillsTemplate()[0];
 
-        // Criamos a skill com esse ID
-        var skill = new Skills { Id = skillId, Name = "C#" };
+        var userSkillDto = new UserSkillDto(UserId: userId, SkillId: skill.Id);
 
-        // Criamos o DTO usando os mesmos IDs
-        var userSkillDto = new UserSkillDto(UserId: userId, SkillId: skillId);
-
-        // Mock: O usuário e a skill existem no repositório
         userSkillsRepositoryMock.Setup(repo => repo.UserExists(userId)).ReturnsAsync(true);
-        userSkillsRepositoryMock.Setup(repo => repo.SkillExists(skillId)).ReturnsAsync(true);
+        userSkillsRepositoryMock.Setup(repo => repo.SkillExists(skill.Id)).ReturnsAsync(true);
+        skillsRepositoryMock.Setup(repo => repo.GetSkillById(skill.Id)).ReturnsAsync(skill);
+        userSkillsRepositoryMock.Setup(repo => repo.GetUserSkillsByUser(userId)).ReturnsAsync(new List<Skills>());
+        userSkillsRepositoryMock.Setup(repo => repo.AddSkillToUser(userId, skill)).Returns(Task.CompletedTask);
 
-        // Mock: Retornar a skill correta ao buscar por ID
-        skillsRepositoryMock.Setup(repo => repo.GetSkillById(skillId)).ReturnsAsync(skill);
-
-        // Mock: No início, o usuário NÃO tem a skill
-        userSkillsRepositoryMock.Setup(repo => repo.GetUserSkillsByUser(userId))
-                                .ReturnsAsync(new List<Skills>());
-
-        // Mock: Adicionar skill ao usuário
-        userSkillsRepositoryMock.Setup(repo => repo.AddSkillToUser(userId, skill))
-                                .Returns(Task.CompletedTask);
-
-        // Criamos a skill primeiro
         await userSkillsController.CreateUserSkill(userSkillDto);
 
-        // **ATUALIZA O MOCK PARA QUE O USUÁRIO TENHA A SKILL AGORA**
-        userSkillsRepositoryMock.Setup(repo => repo.GetUserSkillsByUser(userId))
-                                .ReturnsAsync(new List<Skills> { skill });
+        userSkillsRepositoryMock.Setup(repo => repo.GetUserSkillsByUser(userId)).ReturnsAsync(new List<Skills> { skill });
+        userSkillsRepositoryMock.Setup(repo => repo.RemoveSkillFromUser(userId, skill)).Returns(Task.CompletedTask);
 
-        // Mock: Remover skill do usuário
-        userSkillsRepositoryMock.Setup(repo => repo.RemoveSkillFromUser(userId, skill))
-                                .Returns(Task.CompletedTask);
-
-        // Removemos a skill
-        var result = await userSkillsController.DeleteUserSkill(userId, skillId);
+        var result = await userSkillsController.DeleteUserSkill(userId, skill.Id);
         var noContentResult = result as NoContentResult;
 
-        // Assert: Deve retornar 204 No Content
         Assert.That(noContentResult, Is.Not.Null);
         Assert.That(noContentResult.StatusCode, Is.EqualTo(204));
     }
 
-
     #region Private Methods
-
-    private static Users CreateUserTemplate()
-    {
-        return new Users()
-        {
-            Id = Guid.NewGuid(),
-            Name = "User Test",
-            Email = "usertest@gmail.com",
-            Password = PasswordHasher.HashPassword("User1@Test-123"),
-            Balance = 149.99m,
-            IsMentor = true
-        };
-    }
 
     private static List<Skills> CreateSkillsTemplate()
     {
