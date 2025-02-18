@@ -5,7 +5,7 @@ import Img from "/assets/SkillSwap-Logo.png";
 import { IMentorshipRequest } from "../../types/mentorshipRequest";
 import { CreateMentorshipRequest } from "../../services/mentorshipRequestsService";
 import { GetMentors, GetUsers, GetUserById } from "../../services/usersService";
-import { GetAllSkills } from "../../services/skillsService";
+import { GetSkillByUser } from "../../services/userSkillsService";
 
 export default function NewMentorshipRequest() {
     const [mentorId, setMentorId] = useState("");
@@ -28,21 +28,24 @@ export default function NewMentorshipRequest() {
         const fetchData = async () => {
             try {
                 const mentorsResponse = await GetMentors();
-                const mentorsArray = mentorsResponse.data.$values || [];
+                const mentorsArray = mentorsResponse.data || [];
                 setMentors(mentorsArray);
 
                 const usersResponse = await GetUsers();
-                const usersArray = usersResponse.data.$values || [];
+                const usersArray = usersResponse.data || [];
                 setLearners(usersArray.filter((user: any) => !user.isMentor));
 
-                const skillsResponse = await GetAllSkills();
-                const skillsArray = skillsResponse.data.$values || [];
-                setSkills(skillsArray);
+                const mentorSkillsResponse = await GetSkillByUser(userId!);
+                const mentorSkillsArray = mentorSkillsResponse.data || [];
+                setSkills(mentorSkillsArray);
 
-                if (userId) {
-                    const userResponse = await GetUserById(userId);
-                    setUserIsMentor(userResponse.data.isMentor);
-                }
+                console.log(mentorSkillsResponse);
+
+                const userResponse = await GetUserById(userId!);
+                setUserIsMentor(userResponse.data.isMentor);
+
+                
+
             } catch {
                 setError("Failed to load data.");
             }
@@ -64,7 +67,7 @@ export default function NewMentorshipRequest() {
 
         if (userIsMentor) {
             newMentorshipRequest.mentorId = userId || "";
-            newMentorshipRequest.learnerId = learnerId; 
+            newMentorshipRequest.learnerId = learnerId;
         } else {
             newMentorshipRequest.mentorId = mentorId;
             newMentorshipRequest.learnerId = userId || "";

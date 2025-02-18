@@ -18,19 +18,16 @@ public class UserSkillsRepository : IUserSkillsRepository
 
     public async Task<List<Skills>> GetUserSkillsByUser(Guid userId)
     {
-        var user = await Users.AsNoTracking().Include(u => u.Skills)
-                              .FirstOrDefaultAsync(u => u.Id == userId);
+        var skills = await _context.UserSkills.Where(us => us.UserId == userId)
+                                              .Select(us => us.Skill) .AsNoTracking()
+                                              .ToListAsync();
 
-        if (user == null || user.Skills == null) return new List<Skills>();
-
-        return user.Skills.ToList();
+        return skills;
     }
 
     public async Task<bool> UserHasSkill(Guid userId, Guid skillId)
     {
-        var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
-
-        return user?.Skills?.Any(s => s.Id == skillId) ?? false;
+        return await _context.UserSkills.AnyAsync(us => us.UserId == userId && us.SkillId == skillId);
     }
 
     public async Task<bool> UserExists(Guid userId)
@@ -45,18 +42,33 @@ public class UserSkillsRepository : IUserSkillsRepository
 
     public async Task AddSkillToUser(Guid userId, Skills skill)
     {
-        var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
+        var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
+        var skillExists = await _context.Skills.AnyAsync(s => s.Id == skill.Id);
 
-        if (user != null && user.Skills == null) user.Skills = new List<Skills>();
+        if (!userExists || !skillExists) return;
 
-        user?.Skills.Add(skill);
+        var userSkill = new UserSkills
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            SkillId = skill.Id,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        _context.UserSkills.Add(userSkill);
         await _context.SaveChangesAsync();
     }
 
     public async Task RemoveSkillFromUser(Guid userId, Skills skill)
     {
-        var user = await Users.Include(u => u.Skills).FirstOrDefaultAsync(u => u.Id == userId);
-        user.Skills.Remove(skill);
-        await _context.SaveChangesAsync();
+        var userSkill = await _context.UserSkills
+            .FirstOrDefaultAsync(us => us.UserId == userId && us.SkillId == skill.Id);
+
+        if (userSkill != null)
+        {
+            _context.UserSkills.Remove(userSkill);
+            await _context.SaveChangesAsync();
+        }
     }
 }

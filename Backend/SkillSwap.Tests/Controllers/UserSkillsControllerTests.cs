@@ -3,6 +3,7 @@ using Moq;
 using SkillSwap.Entities.Entities;
 using SkillSwap.Server.Controllers;
 using SkillSwap.Server.Models.DTOs;
+using SkillSwap.Services.Helpers;
 using SkillSwap.Services.Repositories.Interfaces;
 using SkillSwap.Services.Services;
 
@@ -35,7 +36,7 @@ public class UserSkillsControllerTests
 
         var result = await userSkillsController.GetUserSkillsByUser(userId);
         var okResult = result.Result as OkObjectResult;
-        var response = okResult.Value as List<Skills>;
+        var response = okResult?.Value as List<Skills>;
 
         Assert.That(okResult, Is.Not.Null);
         Assert.That(response, Is.Not.Null);
@@ -52,13 +53,13 @@ public class UserSkillsControllerTests
     public async Task UserHasSkill_ReturnsTrue_WhenUserHasSkill()
     {
         var userId = Guid.NewGuid();
-        var skill = CreateSkillsTemplate()[0];
+        var skillId = Guid.NewGuid();
 
-        userSkillsRepositoryMock.Setup(repo => repo.UserHasSkill(userId, skill.Id)).ReturnsAsync(true);
+        userSkillsRepositoryMock.Setup(repo => repo.UserHasSkill(userId, skillId)).ReturnsAsync(true);
 
-        var result = await userSkillsController.UserHasSkill(userId, skill.Id);
+        var result = await userSkillsController.UserHasSkill(userId, skillId);
         var okResult = result.Result as OkObjectResult;
-        var response = okResult.Value as bool?;
+        var response = okResult?.Value as bool?;
 
         Assert.That(okResult, Is.Not.Null);
         Assert.That(response, Is.Not.Null);
@@ -70,16 +71,16 @@ public class UserSkillsControllerTests
     }
 
     [Test]
-    public async Task UserHasSkill_ReturnsFalse_WhenUserDontHaveSkill()
+    public async Task UserHasSkill_ReturnsFalse_WhenUserDoesNotHaveSkill()
     {
         var userId = Guid.NewGuid();
-        var skill = Guid.NewGuid();
+        var skillId = Guid.NewGuid();
 
-        userSkillsRepositoryMock.Setup(repo => repo.UserHasSkill(userId, skill)).ReturnsAsync(false);
+        userSkillsRepositoryMock.Setup(repo => repo.UserHasSkill(userId, skillId)).ReturnsAsync(false);
 
-        var result = await userSkillsController.UserHasSkill(userId, skill);
+        var result = await userSkillsController.UserHasSkill(userId, skillId);
         var okResult = result.Result as OkObjectResult;
-        var response = okResult.Value as bool?;
+        var response = okResult?.Value as bool?;
 
         Assert.That(okResult, Is.Not.Null);
         Assert.That(response, Is.Not.Null);
@@ -94,15 +95,12 @@ public class UserSkillsControllerTests
     public async Task CreateUserSkill_ReturnsCreatedResult_WithValidUserSkill()
     {
         var userSkillDto = CreateUserSkillDTOTemplate();
-
         var skill = CreateSkillsTemplate()[0];
 
         userSkillsRepositoryMock.Setup(repo => repo.UserExists(userSkillDto.UserId)).ReturnsAsync(true);
         userSkillsRepositoryMock.Setup(repo => repo.SkillExists(userSkillDto.SkillId)).ReturnsAsync(true);
-
         userSkillsRepositoryMock.Setup(repo => repo.GetUserSkillsByUser(userSkillDto.UserId))
                                  .ReturnsAsync(new List<Skills>());
-
         skillsRepositoryMock.Setup(repo => repo.GetSkillById(userSkillDto.SkillId)).ReturnsAsync(skill);
         userSkillsRepositoryMock.Setup(repo => repo.AddSkillToUser(userSkillDto.UserId, It.IsAny<Skills>()))
                                 .Returns(Task.CompletedTask);
@@ -121,23 +119,66 @@ public class UserSkillsControllerTests
     [Test]
     public async Task DeleteUserSkill_ReturnsNoContent_WhenUserSkillIsDeleted()
     {
-        var skills = CreateSkillsTemplate();
+        // Criamos IDs fixos
         var userId = Guid.NewGuid();
-        var skillId = skills[0].Id;
+        var skillId = Guid.NewGuid();
 
+        // Criamos a skill com esse ID
+        var skill = new Skills { Id = skillId, Name = "C#" };
+
+        // Criamos o DTO usando os mesmos IDs
+        var userSkillDto = new UserSkillDto(UserId: userId, SkillId: skillId);
+
+        // Mock: O usuário e a skill existem no repositório
         userSkillsRepositoryMock.Setup(repo => repo.UserExists(userId)).ReturnsAsync(true);
         userSkillsRepositoryMock.Setup(repo => repo.SkillExists(skillId)).ReturnsAsync(true);
-        userSkillsRepositoryMock.Setup(repo => repo.GetUserSkillsByUser(userId)).ReturnsAsync(new List<Skills> { skills[0] });
-        userSkillsRepositoryMock.Setup(repo => repo.RemoveSkillFromUser(userId, skills[0])).Returns(Task.CompletedTask);
 
+        // Mock: Retornar a skill correta ao buscar por ID
+        skillsRepositoryMock.Setup(repo => repo.GetSkillById(skillId)).ReturnsAsync(skill);
+
+        // Mock: No início, o usuário NÃO tem a skill
+        userSkillsRepositoryMock.Setup(repo => repo.GetUserSkillsByUser(userId))
+                                .ReturnsAsync(new List<Skills>());
+
+        // Mock: Adicionar skill ao usuário
+        userSkillsRepositoryMock.Setup(repo => repo.AddSkillToUser(userId, skill))
+                                .Returns(Task.CompletedTask);
+
+        // Criamos a skill primeiro
+        await userSkillsController.CreateUserSkill(userSkillDto);
+
+        // **ATUALIZA O MOCK PARA QUE O USUÁRIO TENHA A SKILL AGORA**
+        userSkillsRepositoryMock.Setup(repo => repo.GetUserSkillsByUser(userId))
+                                .ReturnsAsync(new List<Skills> { skill });
+
+        // Mock: Remover skill do usuário
+        userSkillsRepositoryMock.Setup(repo => repo.RemoveSkillFromUser(userId, skill))
+                                .Returns(Task.CompletedTask);
+
+        // Removemos a skill
         var result = await userSkillsController.DeleteUserSkill(userId, skillId);
         var noContentResult = result as NoContentResult;
 
+        // Assert: Deve retornar 204 No Content
         Assert.That(noContentResult, Is.Not.Null);
         Assert.That(noContentResult.StatusCode, Is.EqualTo(204));
     }
 
+
     #region Private Methods
+
+    private static Users CreateUserTemplate()
+    {
+        return new Users()
+        {
+            Id = Guid.NewGuid(),
+            Name = "User Test",
+            Email = "usertest@gmail.com",
+            Password = PasswordHasher.HashPassword("User1@Test-123"),
+            Balance = 149.99m,
+            IsMentor = true
+        };
+    }
 
     private static List<Skills> CreateSkillsTemplate()
     {

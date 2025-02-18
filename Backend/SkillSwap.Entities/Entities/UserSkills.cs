@@ -2,17 +2,17 @@
 
 namespace SkillSwap.Entities.Entities;
 
-public class Skills
+public class UserSkills
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
+    public Guid UserId { get; set; }
+    public Users User { get; set; }
+    public Guid SkillId { get; set; }
+    public Skills Skill { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime CreatedAt { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime UpdatedAt { get; set; }
-
-    public ICollection<UserSkills> UserSkills { get; set; } = new List<UserSkills>();
 }

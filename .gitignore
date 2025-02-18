@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Backend/SkillSwap.Server/appsettings.json
 /Backend/SkillSwap.Tests/coverage-report
+/Backend/SkillSwap.EntityConfiguration/Migrations

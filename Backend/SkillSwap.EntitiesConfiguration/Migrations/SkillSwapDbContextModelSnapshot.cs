@@ -222,6 +222,37 @@ namespace SkillSwap.EntitiesConfiguration.Migrations
                     b.ToTable("Skills", (string)null);
                 });
 
+            modelBuilder.Entity("SkillSwap.Entities.Entities.UserSkills", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SkillId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSkills", (string)null);
+                });
+
             modelBuilder.Entity("SkillSwap.Entities.Entities.Users", b =>
                 {
                     b.Property<Guid>("Id")
@@ -271,21 +302,6 @@ namespace SkillSwap.EntitiesConfiguration.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("SkillsUsers", b =>
-                {
-                    b.Property<Guid>("SkillsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SkillsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("UserSkills", (string)null);
                 });
 
             modelBuilder.Entity("SkillSwap.Entities.Entities.MentorshipRequests", b =>
@@ -375,19 +391,33 @@ namespace SkillSwap.EntitiesConfiguration.Migrations
                     b.Navigation("MentorshipRequest");
                 });
 
-            modelBuilder.Entity("SkillsUsers", b =>
+            modelBuilder.Entity("SkillSwap.Entities.Entities.UserSkills", b =>
                 {
-                    b.HasOne("SkillSwap.Entities.Entities.Skills", null)
-                        .WithMany()
-                        .HasForeignKey("SkillsId")
+                    b.HasOne("SkillSwap.Entities.Entities.Skills", "Skill")
+                        .WithMany("UserSkills")
+                        .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SkillSwap.Entities.Entities.Users", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
+                    b.HasOne("SkillSwap.Entities.Entities.Users", "User")
+                        .WithMany("UserSkills")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Skill");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SkillSwap.Entities.Entities.Skills", b =>
+                {
+                    b.Navigation("UserSkills");
+                });
+
+            modelBuilder.Entity("SkillSwap.Entities.Entities.Users", b =>
+                {
+                    b.Navigation("UserSkills");
                 });
 #pragma warning restore 612, 618
         }

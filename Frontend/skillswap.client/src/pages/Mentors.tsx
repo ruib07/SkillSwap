@@ -17,7 +17,7 @@ export default function Mentors() {
         const fetchMentors = async () => {
             try {
                 const response = await GetMentors();
-                const mentorsArray = response.data.$values || [];
+                const mentorsArray = response.data || [];
                 setMentors(mentorsArray);
                 setFilteredMentors(mentorsArray);
             } catch {

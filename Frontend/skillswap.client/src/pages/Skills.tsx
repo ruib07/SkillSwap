@@ -17,7 +17,7 @@ export default function Skills() {
         const fetchSkills = async () => {
             try {
                 const response = await GetAllSkills();
-                const skillsArray = response.data.$values || [];
+                const skillsArray = response.data || [];
                 setSkills(skillsArray);
                 setFilteredSkills(skillsArray);
             } catch {

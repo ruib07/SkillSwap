@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SkillSwap.EntitiesConfiguration.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDb : Migration
+    public partial class NewSkillSwapDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,6 +37,7 @@ namespace SkillSwap.EntitiesConfiguration.Migrations
                     Bio = table.Column<string>(type: "varchar(MAX)", nullable: true),
                     ProfilePicture = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Balance = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    IsMentor = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
@@ -136,8 +137,8 @@ namespace SkillSwap.EntitiesConfiguration.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SkillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
@@ -251,6 +252,12 @@ namespace SkillSwap.EntitiesConfiguration.Migrations
                 name: "IX_Sessions_MentorshipRequestId",
                 table: "Sessions",
                 column: "MentorshipRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Skills_Name",
+                table: "Skills",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSkills_SkillId",

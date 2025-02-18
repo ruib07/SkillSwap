@@ -11,6 +11,7 @@ public class SkillSwapDbContext : DbContext
     public DbSet<Users> Users { get; set; }
     public DbSet<PasswordResetToken> PasswordResetsToken { get; set; }
     public DbSet<Skills> Skills { get; set; }
+    public DbSet<UserSkills> UserSkills { get; set; }
     public DbSet<MentorshipRequests> MentorshipRequests { get; set; }
     public DbSet<Sessions> Sessions { get; set; }
     public DbSet<Reviews> Reviews { get; set; }

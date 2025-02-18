@@ -34,7 +34,7 @@ export default function MentorshipRequests() {
                     requestsResponse = await GetMentorshipRequestsByLearner(userId);
                 }
 
-                const requests = requestsResponse.data.$values || [];
+                const requests = requestsResponse.data || [];
                 setMentorshipRequests(requests);
 
                 requests.forEach(async (request: IMentorshipRequest) => {

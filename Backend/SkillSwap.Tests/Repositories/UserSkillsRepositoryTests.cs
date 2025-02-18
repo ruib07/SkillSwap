@@ -57,11 +57,11 @@ public class UserSkillsRepositoryTests
         var user = CreateUserTemplate();
         var skill = CreateSkillTemplate()[0];
 
-        user.Skills.Add(skill);  
         context.Users.Add(user);
         context.Skills.Add(skill);
         await context.SaveChangesAsync();
 
+        await userSkillsRepository.AddSkillToUser(user.Id, skill);
         var trueResponse = await userSkillsRepository.UserHasSkill(user.Id, skill.Id);
 
         Assert.That(trueResponse, Is.True); 
