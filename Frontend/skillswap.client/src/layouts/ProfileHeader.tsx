@@ -23,6 +23,7 @@ export default function ProfileHeader() {
         name: string;
         profilePicture: string;
     } | null>(null);
+    const [isMentor, setIsMentor] = useState<boolean | null>(null);
     const [, setError] = useState<string | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -42,8 +43,9 @@ export default function ProfileHeader() {
             try {
                 const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
                 const response = await GetUserById(userId!);
-                const { name, profilePicture } = response.data;
+                const { name, profilePicture, isMentor } = response.data;
                 setUserData({ name, profilePicture });
+                setIsMentor(isMentor);
             } catch (error) {
                 setError(`Failed to load user data: ${error}`);
             }
@@ -62,6 +64,12 @@ export default function ProfileHeader() {
         navigate("/");
         window.location.reload();
     };
+
+    const filteredProfileNavigation = profileNavigation.filter((item) => {
+        if (item.name === "My Reviews") return isMentor === false;
+        if (item.name === "My Skills") return isMentor === true;
+        return true;
+    });
 
     return (
         <Disclosure
@@ -95,7 +103,7 @@ export default function ProfileHeader() {
                         </div>
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
-                                {profileNavigation.map((item) => (
+                                {filteredProfileNavigation.map((item) => (
                                     <a
                                         key={item.name}
                                         href={userData ? item.href : "#"}
@@ -122,7 +130,7 @@ export default function ProfileHeader() {
                         {userData && (
                             <Menu as="div" className="relative ml-3">
                                 <div>
-                                    <MenuButton className="flex items-center text-sm text-gray-200">
+                                    <MenuButton className="flex items-center text-sm text-gray-200 cursor-pointer">
                                         <img
                                             alt="UserIcon"
                                             src={
@@ -136,12 +144,12 @@ export default function ProfileHeader() {
                                 </div>
                                 <MenuItems
                                     transition
-                                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-200 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-gray-600 ring-opacity-5 focus:outline-none"
                                 >
                                     <MenuItem>
                                         <button
                                             onClick={handleSignOut}
-                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700"
+                                            className="block w-full hover:bg-gray-600 text-left px-4 py-2 text-sm text-gray-300 cursor-pointer"
                                         >
                                             Sign out
                                         </button>

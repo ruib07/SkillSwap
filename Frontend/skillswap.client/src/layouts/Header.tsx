@@ -19,6 +19,7 @@ function classNames(...classes: any) {
 
 export default function Header() {
     const [userData, setUserData] = useState<{ name: string; profilePicture: string; } | null>(null);
+    const [isMentor, setIsMentor] = useState<boolean | null>(null);
     const [, setError] = useState<string | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -45,8 +46,9 @@ export default function Header() {
 
             try {
                 const response = await GetUserById(userId!);
-                const { name, profilePicture } = response.data;
+                const { name, profilePicture, isMentor } = response.data;
                 setUserData({ name, profilePicture });
+                setIsMentor(isMentor);
             } catch (error) {
                 setError(`Failed to load user data: ${error}`);
             }
@@ -65,6 +67,11 @@ export default function Header() {
         navigate("/");
         window.location.reload();
     };
+
+    const filteredNavigation = navigation.filter((item) => {
+        if (item.name === "Skills") return isMentor === true;
+        return true;
+    });
 
     return (
         <Disclosure
@@ -96,7 +103,7 @@ export default function Header() {
                         </div>
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
-                                {navigation
+                                {filteredNavigation
                                     .filter(item => !item.requiresAuth || userData)
                                     .map((item) => (
                                         <a
@@ -143,7 +150,7 @@ export default function Header() {
                                     <MenuItem>
                                         <button
                                             onClick={handleSignOut}
-                                            className="block w-full hover:bg-gray-600 text-left px-4 py-2 text-sm text-gray-300"
+                                            className="block w-full hover:bg-gray-600 text-left px-4 py-2 text-sm text-gray-300 cursor-pointer"
                                         >
                                             Sign out
                                         </button>

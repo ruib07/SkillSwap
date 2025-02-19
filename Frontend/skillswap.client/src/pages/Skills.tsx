@@ -44,7 +44,7 @@ export default function Skills() {
             <Header />
             <br />
             <br />
-            <div className="flex flex-col items-center p-8 min-h-screen">
+            <div className="flex flex-col items-center p-8">
                 <h1 className="text-3xl font-bold mb-6 text-center text-gray-200">
                     Skills
                 </h1>

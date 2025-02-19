@@ -6,3 +6,9 @@ export interface IReview {
     comments: string;
     createdAt?: string;
 }
+
+export interface IDeleteReview {
+    reviewId: string;
+    onClose: () => void;
+    onConfirm: () => void;
+}

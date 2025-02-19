@@ -9,7 +9,7 @@ export default function Home() {
             <Header />
             <br />
             <br />
-            <div className="min-h-screen">
+            <div>
                 <section
                     className="relative text-white py-20"
                     style={{

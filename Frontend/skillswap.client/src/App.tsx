@@ -27,6 +27,7 @@ import SessionCreation from "./components/Sessions/CreateSession";
 
 import MyInformation from "./components/Profile/UserInformation";
 import UserSkills from "./components/Profile/UserSkills";
+import UserReviews from "./components/Profile/UserReviews";
 
 export default function App() {
     return (
@@ -66,7 +67,8 @@ export default function App() {
                         <Route path="/Session/Create/:mentorshipRequestId" element={<SessionCreation /> } />
 
                         <Route path="/MyInfo" element={<MyInformation />} />
-                        <Route path="/MySkills" element={<UserSkills /> } />
+                        <Route path="/MySkills" element={<UserSkills />} />
+                        <Route path="/MyReviews" element={<UserReviews /> } />
                     </Routes>
                 </div>
             </div>

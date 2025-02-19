@@ -42,7 +42,7 @@ export default function Mentors() {
     return (
         <>
             <Header /><br /><br />
-            <div className="p-8 min-h-screen bg-gray-900">
+            <div className="p-8 bg-gray-900">
                 <h1 className="text-4xl font-bold text-center text-gray-200 mb-8">
                     Available Mentors
                 </h1>

@@ -85,7 +85,7 @@ export default function MentorshipRequests() {
     return (
         <>
             <Header /><br /><br />
-            <div className="p-8 bg-gray-900 min-h-screen">
+            <div className="p-8 bg-gray-900">
                 <h1 className="text-4xl font-bold text-center text-gray-200 mb-8">
                     Your Mentorship Requests
                 </h1>
