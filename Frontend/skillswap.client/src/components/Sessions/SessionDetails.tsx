@@ -4,6 +4,7 @@ import Header from "../../layouts/Header";
 import { GetSessionById } from "../../services/sessionsService";
 import { ISession } from "../../types/session";
 import NotFound from "../../pages/404";
+import SessionReviews from "./Reviews";
 
 export default function SessionDetails() {
     const { sessionId } = useParams<{ sessionId: string }>();
@@ -62,6 +63,7 @@ export default function SessionDetails() {
                         </div>
                     </div>
                 </div>
+                <SessionReviews />
             </div>
         </>
     )

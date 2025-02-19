@@ -7,7 +7,7 @@ import { IUser } from "../types/user";
 import { GetMentorshipRequestsByLearner, GetMentorshipRequestsByMentor } from "../services/mentorshipRequestsService";
 import { IMentorshipRequest } from "../types/mentorshipRequest";
 import { GetSessionsByMentorshipRequest } from "../services/sessionsService";
-import MentorshipRequestsModal from "../components/Mentorships/MentorshipRequestsModal";
+import MentorshipRequestsModal from "../components/Modals/MentorshipRequestsModal";
 
 export default function Sessions() {
     const [, setUser] = useState<IUser | null>(null);

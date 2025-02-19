@@ -3,7 +3,7 @@ import UserProfileHeader from "../../layouts/ProfileHeader";
 import { useNavigate } from "react-router-dom";
 import { ISkill } from "../../types/skill";
 import { GetSkillsByUser } from "../../services/userSkillsService";
-import RemoveSkill from "../Skills/DeleteSkillModal";
+import RemoveSkill from "../Modals/DeleteUserSkillModal";
 
 export default function UserSkills() {
     const [skills, setSkills] = useState<ISkill[]>([]);
@@ -32,7 +32,7 @@ export default function UserSkills() {
         };
 
         fetchUserSkills();
-    }, []);
+    }, [userId]);
 
     const handleToggleDescription = (projectId: string) => {
         setExpandedDescription((prev) => (prev === projectId ? null : projectId));

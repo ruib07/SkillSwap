@@ -99,7 +99,7 @@ export default function Authentication() {
                                             type="checkbox"
                                             checked={rememberMe}
                                             onClick={() => setRememberMe(!rememberMe)}
-                                            className="w-4 h-4 border rounded focus:ring-3 bg-gray-700 border-gray-900 focus:ring-blue-600 ring-offset-gray-800"
+                                            className="w-4 h-4 border rounded focus:ring-3 bg-gray-700 border-gray-900 focus:ring-blue-600 ring-offset-gray-800 cursor-pointer"
                                         />
                                     </div>
                                 </div>
