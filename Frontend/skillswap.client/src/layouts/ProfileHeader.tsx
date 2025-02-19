@@ -95,33 +95,26 @@ export default function ProfileHeader() {
                         </div>
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
-                                {profileNavigation.map((item) => {
-                                    const isSkill = item.name === "Skills";
-                                    const isAccessible = isSkill || userData;
-
-                                    return (
-                                        <a
-                                            key={item.name}
-                                            href={isAccessible ? item.href : "#"}
-                                            aria-current={
-                                                location.pathname === item.href ? "page" : undefined
-                                            }
-                                            className={classNames(
-                                                location.pathname === item.href
-                                                    ? "text-blue-500"
-                                                    : isAccessible
-                                                        ? "text-gray-200 hover:text-blue-500"
-                                                        : "text-gray-200 cursor-not-allowed",
-                                                "rounded-md px-3 py-2 text-sm font-medium"
-                                            )}
-                                            onClick={(e) => {
-                                                if (!isAccessible) e.preventDefault();
-                                            }}
-                                        >
-                                            {item.name}
-                                        </a>
-                                    );
-                                })}
+                                {profileNavigation.map((item) => (
+                                    <a
+                                        key={item.name}
+                                        href={userData ? item.href : "#"}
+                                        aria-current={location.pathname === item.href ? "page" : undefined}
+                                        className={classNames(
+                                            location.pathname === item.href
+                                                ? "text-blue-500"
+                                                : userData
+                                                    ? "text-gray-200 hover:text-blue-500"
+                                                    : "text-gray-200 cursor-not-allowed",
+                                            "rounded-md px-3 py-2 text-sm font-medium"
+                                        )}
+                                        onClick={(e) => {
+                                            if (!userData) e.preventDefault();
+                                        }}
+                                    >
+                                        {item.name}
+                                    </a>
+                                ))}
                             </div>
                         </div>
                     </div>

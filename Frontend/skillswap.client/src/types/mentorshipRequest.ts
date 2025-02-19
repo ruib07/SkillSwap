@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export enum MentorshipRequestsStatus {
     Pending = 0,
     Accepted = 1,
@@ -19,4 +21,9 @@ export interface IMentorshipRequest {
     skillId: string;
     status: number;
     scheduledAt: string;
+}
+
+export interface ModalProps {
+    children: ReactNode;
+    onClose: () => void;
 }

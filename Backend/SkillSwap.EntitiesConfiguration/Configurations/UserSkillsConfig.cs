@@ -15,8 +15,8 @@ public class UserSkillsConfig : IEntityTypeConfiguration<UserSkills>
         builder.Property(p => p.SkillId).IsRequired();
 
         builder.Property(us => us.CreatedAt)
-                  .HasDefaultValueSql("GETUTCDATE()")
-                  .ValueGeneratedOnAdd();
+               .HasDefaultValueSql("GETUTCDATE()")
+               .ValueGeneratedOnAdd();
 
         builder.Property(us => us.UpdatedAt)
                .HasDefaultValueSql("GETUTCDATE()")

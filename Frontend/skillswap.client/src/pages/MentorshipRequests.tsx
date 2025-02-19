@@ -5,6 +5,7 @@ import { GetSkillById } from "../services/skillsService";
 import { GetUserById } from "../services/usersService";
 import { IMentorshipRequest, mentorshipStatusMap } from "../types/mentorshipRequest";
 import { IUser } from "../types/user";
+import { useNavigate } from "react-router-dom";
 
 export default function MentorshipRequests() {
     const [user, setUser] = useState<IUser | null>(null);
@@ -13,6 +14,7 @@ export default function MentorshipRequests() {
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [mentorsPerPage] = useState(14);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserAndRequests = async () => {
@@ -54,6 +56,10 @@ export default function MentorshipRequests() {
 
         fetchUserAndRequests();
     }, []);
+
+    const handleSessionClick = (mentorshipRequestId: string) => {
+        navigate(`/Session/Create/${encodeURIComponent(mentorshipRequestId)}`);
+    };
 
     const handleUpdateStatus = async (mentorshipRequestId: string, newStatus: number) => {
         try {
@@ -123,6 +129,14 @@ export default function MentorshipRequests() {
                                     <div className="mt-4 flex space-x-4">
                                         {user?.isMentor ? (
                                             <>
+                                                <button
+                                                    onClick={() => handleSessionClick(request.id!)}
+                                                    disabled={request.status !== 1}
+                                                    className={`cursor-pointer px-4 py-2 text-white font-bold rounded ${request.status === 1 ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-500 cursor-not-allowed"
+                                                        }`}
+                                                >
+                                                    Create Session
+                                                </button>
                                                 <button
                                                     onClick={() => handleUpdateStatus(request.id!, 1)}
                                                     disabled={request.status !== 0}

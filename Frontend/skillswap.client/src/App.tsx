@@ -21,7 +21,12 @@ import Mentors from "./pages/Mentors";
 import MentorshipRequests from "./pages/MentorshipRequests";
 import NewMentorshipRequest from "./components/Mentorships/CreateMentorshipRequest";
 
+import Sessions from "./pages/Sessions";
+import SessionDetails from "./components/Sessions/SessionDetails";
+import SessionCreation from "./components/Sessions/CreateSession";
+
 import MyInformation from "./components/Profile/UserInformation";
+import UserSkills from "./components/Profile/UserSkills";
 
 export default function App() {
     return (
@@ -56,7 +61,12 @@ export default function App() {
                         <Route path="/MentorshipRequests" element={<MentorshipRequests /> } />
                         <Route path="/Mentorship/Create" element={<NewMentorshipRequest />} />
 
+                        <Route path="/Sessions" element={<Sessions />} />
+                        <Route path="/Session/:sessionId" element={<SessionDetails /> } />
+                        <Route path="/Session/Create/:mentorshipRequestId" element={<SessionCreation /> } />
+
                         <Route path="/MyInfo" element={<MyInformation />} />
+                        <Route path="/MySkills" element={<UserSkills /> } />
                     </Routes>
                 </div>
             </div>

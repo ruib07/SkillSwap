@@ -5,7 +5,7 @@ import Img from "/assets/SkillSwap-Logo.png";
 import { IMentorshipRequest } from "../../types/mentorshipRequest";
 import { CreateMentorshipRequest } from "../../services/mentorshipRequestsService";
 import { GetMentors, GetUsers, GetUserById } from "../../services/usersService";
-import { GetSkillByUser } from "../../services/userSkillsService";
+import { GetSkillsByUser } from "../../services/userSkillsService";
 
 export default function NewMentorshipRequest() {
     const [mentorId, setMentorId] = useState("");
@@ -35,7 +35,7 @@ export default function NewMentorshipRequest() {
                 const usersArray = usersResponse.data || [];
                 setLearners(usersArray.filter((user: any) => !user.isMentor));
 
-                const mentorSkillsResponse = await GetSkillByUser(userId!);
+                const mentorSkillsResponse = await GetSkillsByUser(userId!);
                 const mentorSkillsArray = mentorSkillsResponse.data || [];
                 setSkills(mentorSkillsArray);
 
