@@ -2,10 +2,10 @@ To run this project, you have to complete the following steps:
 
 - Create a .env file on the frontend and put the VITE_API_BASE_URL to your backend url
 - Create the database following these steps:
-  - Delete Migrations folder in SkillSwap.EntityConfiguration
+  - Delete Migrations folder in SkillSwap.EntitiesConfiguration
   - On the terminal, "Add-Migration migration-name"
   - On the terminal, "Update-Database"
-- You need to be with SkillSwap.Server as the StartUp Project and the terminal in the SkillSwap.EntityConfiguratio project
+- You need to be with SkillSwap.Server as the StartUp Project and the terminal in the SkillSwap.EntitiesConfiguration project
 - Add a appsettings.json on your SkillSwap.Server with the following structure:
 ```json
 {
