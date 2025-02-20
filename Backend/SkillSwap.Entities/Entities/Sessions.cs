@@ -10,6 +10,7 @@ public class Sessions
     public DateTime SessionTime { get; set; }
     public int Duration { get; set; }
     public string VideoLink { get; set; }
+    public decimal Amount { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime CreatedAt { get; set; }

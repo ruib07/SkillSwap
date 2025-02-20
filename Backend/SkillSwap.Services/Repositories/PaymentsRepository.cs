@@ -36,4 +36,15 @@ public class PaymentsRepository : IPaymentsRepository
         await _context.SaveChangesAsync();
         return payment;
     }
+
+    public async Task<Payments> UpdatePaymentStatus(Guid id, PaymentStatus paymentStatus)
+    {
+        var existingPayment = await Payments.FirstOrDefaultAsync(p => p.Id == id);
+        if (existingPayment == null) return null;
+
+        existingPayment.Status = paymentStatus; 
+        await _context.SaveChangesAsync();
+
+        return existingPayment;
+    }
 }

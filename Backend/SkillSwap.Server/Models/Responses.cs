@@ -1,4 +1,6 @@
-﻿namespace SkillSwap.Server.Models;
+﻿using SkillSwap.Entities.Entities;
+
+namespace SkillSwap.Server.Models;
 
 public class Responses
 {
@@ -6,6 +8,12 @@ public class Responses
     {
         public string Message { get; set; }
         public Guid Id { get; set; }
+    }
+
+    public class UpdatePaymentStatusResponse
+    {
+        public string Message { get; set; }
+        public PaymentStatus UpdatedStatus { get; set; }
     }
 
     public class ErrorResponse

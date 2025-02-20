@@ -4,4 +4,5 @@ export interface ISession {
     sessionTime: string;
     duration: number;
     videoLink: string;
+    amount: number;
 }

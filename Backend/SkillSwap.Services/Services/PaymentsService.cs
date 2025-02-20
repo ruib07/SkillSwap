@@ -48,4 +48,18 @@ public class PaymentsService
 
         return await _paymentsRepository.SendPayment(payment);
     }
+
+    public async Task<Payments> UpdatePaymentStatus(Guid id, PaymentStatus paymentStatus)
+    {
+        var payment = await _paymentsRepository.GetPaymentById(id);
+
+        if (payment == null) ErrorHelper.ThrowNotFoundException("Payment not found.");
+
+        var updatedPayment = await _paymentsRepository.UpdatePaymentStatus(id, paymentStatus);
+
+        if (updatedPayment == null)
+            ErrorHelper.ThrowBadRequestException("Failed to update payment status.");
+
+        return updatedPayment;
+    }
 }

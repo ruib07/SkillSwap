@@ -21,7 +21,7 @@ export default function ScrollToTopButton() {
 
     return (
         <div
-            className={`fixed bottom-8 right-8 bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-opacity duration-400 ease-in-out ${windowScrolled ? "opacity-100" : "opacity-0 invisible"
+            className={`fixed bottom-8 right-8 bg-blue-500 text-white rounded-full w-12 h-12 z-20 flex items-center justify-center shadow-lg transition-opacity duration-400 ease-in-out ${windowScrolled ? "opacity-100" : "opacity-0 invisible"
                 } sm:block hidden`}
         >
             <button

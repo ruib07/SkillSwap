@@ -74,13 +74,6 @@ export default function SkillDetails() {
 
                         <p className="text-lg text-gray-400 mb-6">{skill.description}</p>
 
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-400">Mentors available to this skill:</span>
-                                <span className="text-lg font-semibold text-blue-400">TODO</span>
-                            </div>
-                        </div>
-
                         <div className="mt-8 flex justify-center">
                             {!userHasSkill ? (
                                 <button

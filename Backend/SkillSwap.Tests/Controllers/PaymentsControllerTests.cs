@@ -113,6 +113,38 @@ public class PaymentsControllerTests
         });
     }
 
+    [Test]
+    public async Task UpdatePaymentStatus_ReturnsOkResult_WithUpdatedStatus()
+    {
+        var payment = CreatePaymentTemplate()[0];
+        var updatedStatus = PaymentStatus.Completed;
+
+        paymentsRepositoryMock.Setup(repo => repo.SendPayment(payment)).ReturnsAsync(payment);
+        paymentsRepositoryMock.Setup(repo => repo.UpdatePaymentStatus(payment.Id, updatedStatus))
+                              .ReturnsAsync(new Payments()
+                              {
+                                  Id = payment.Id,
+                                  PayerId = payment.PayerId,
+                                  MentorId = payment.MentorId,
+                                  Amount = payment.Amount,
+                                  Status = updatedStatus
+                              });
+        paymentsRepositoryMock.Setup(repo => repo.GetPaymentById(payment.Id)).ReturnsAsync(payment);
+
+        await paymentsController.SendPayment(payment);
+        var result = await paymentsController.UpdatePaymentStatus(payment.Id, updatedStatus);
+        var okResult = result.Result as OkObjectResult;
+        var response = okResult.Value as UpdatePaymentStatusResponse;
+
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(response, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(response.Message, Is.EqualTo("Payment status updated successfully."));
+            Assert.That(response.UpdatedStatus, Is.EqualTo(updatedStatus));
+        });
+    }
+
     #region Private Methods
 
     private static List<Payments> CreatePaymentTemplate()
@@ -125,7 +157,7 @@ public class PaymentsControllerTests
                 PayerId = Guid.NewGuid(),
                 MentorId = Guid.NewGuid(),
                 Amount = 49.99m,
-                Status = PaymentStatus.Completed
+                Status = PaymentStatus.Pending
             }
         };
     }

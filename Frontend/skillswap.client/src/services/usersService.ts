@@ -13,4 +13,6 @@ export const UpdateUser = async (newUserData: Partial<IUser>) => {
    return apiRequest("PUT", `users/${userId}`, newUserData);
 }
 
+export const UpdateBalance = async (userId: string, balance: number) => apiRequest("PATCH", `users/${userId}/balance`, { balance }, true);
+
 export const DeleteUser = async (userId: string) => apiRequest("DELETE", `users/${userId}`, undefined, true);

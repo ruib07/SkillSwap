@@ -57,8 +57,8 @@ export default function MentorshipRequests() {
         fetchUserAndRequests();
     }, []);
 
-    const handleSessionClick = (mentorshipRequestId: string) => {
-        navigate(`/Session/Create/${encodeURIComponent(mentorshipRequestId)}`);
+    const handleSessionClick = (mentorshipRequestId: string, learnerId: string, mentorId: string) => {
+        navigate(`/Session/Create/${mentorshipRequestId}/${learnerId}/${mentorId}`);
     };
 
     const handleUpdateStatus = async (mentorshipRequestId: string, newStatus: number) => {
@@ -130,7 +130,7 @@ export default function MentorshipRequests() {
                                         {user?.isMentor ? (
                                             <>
                                                 <button
-                                                    onClick={() => handleSessionClick(request.id!)}
+                                                    onClick={() => handleSessionClick(request.id!, request.learnerId, request.mentorId)}
                                                     disabled={request.status !== 1}
                                                     className={`cursor-pointer px-4 py-2 text-white font-bold rounded ${request.status === 1 ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-500 cursor-not-allowed"
                                                         }`}

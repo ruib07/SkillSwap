@@ -166,7 +166,8 @@ public class SessionsServiceTests
                 MentorshipRequestId = Guid.NewGuid(),
                 SessionTime = DateTime.Now,
                 Duration = 60,
-                VideoLink = "https://www.youtube.com/watch?v=123456"
+                VideoLink = "https://www.youtube.com/watch?v=123456",
+                Amount = 139.99m
             }
         };
     }
@@ -179,7 +180,8 @@ public class SessionsServiceTests
             MentorshipRequestId = mentorshipRequestId,
             SessionTime = DateTime.Now,
             Duration = 30,
-            VideoLink = "https://www.youtube.com/watch?v=123456"
+            VideoLink = "https://www.youtube.com/watch?v=123456",
+            Amount = 239.99m
         };
     }
 

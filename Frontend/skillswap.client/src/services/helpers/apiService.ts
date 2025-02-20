@@ -4,7 +4,7 @@ import { GetAuthHeaders } from "./getAuthHeaders";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const apiRequest = async (
-    method: "GET" | "POST" | "PUT" | "DELETE",
+    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
     endpoint: string,
     data?: any,
     withAuth: boolean = true 

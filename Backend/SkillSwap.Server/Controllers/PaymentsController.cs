@@ -50,7 +50,7 @@ public class PaymentsController : ControllerBase
     // POST payments
     [Authorize(Policy = ApiConstants.PolicyUser)]
     [HttpPost]
-    public async Task<ActionResult<Reviews>> SendPayment([FromBody] Payments payment)
+    public async Task<ActionResult<Payments>> SendPayment([FromBody] Payments payment)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -60,6 +60,20 @@ public class PaymentsController : ControllerBase
         {
             Message = "Payment created successfully.",
             Id = payment.Id
+        });
+    }
+
+    // PATCH payments/{id}/status
+    [Authorize(Policy = ApiConstants.PolicyUser)]
+    [HttpPatch("{id}/status")]
+    public async Task<ActionResult<Payments>> UpdatePaymentStatus(Guid id, [FromBody] PaymentStatus status)
+    {
+        var updatedPayment = await _payments.UpdatePaymentStatus(id, status);
+
+        return Ok(new UpdatePaymentStatusResponse()
+        {
+            Message = "Payment status updated successfully.",
+            UpdatedStatus = updatedPayment.Status
         });
     }
 }

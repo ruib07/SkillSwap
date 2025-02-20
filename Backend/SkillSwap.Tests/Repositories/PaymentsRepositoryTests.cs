@@ -108,6 +108,25 @@ public class PaymentsRepositoryTests
         });
     }
 
+    [Test]
+    public async Task UpdatePaymentStatus_UpdatesPaymentStatus()
+    {
+        var payment = CreatePaymentsTemplate()[0];
+
+        await paymentsRepository.SendPayment(payment);
+        var updatedPayment = await paymentsRepository.UpdatePaymentStatus(payment.Id, PaymentStatus.Completed);
+
+        Assert.That(updatedPayment, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(updatedPayment.Id, Is.EqualTo(payment.Id));
+            Assert.That(updatedPayment.PayerId, Is.EqualTo(payment.PayerId));
+            Assert.That(updatedPayment.MentorId, Is.EqualTo(payment.MentorId));
+            Assert.That(updatedPayment.Amount, Is.EqualTo(payment.Amount));
+            Assert.That(updatedPayment.Status, Is.EqualTo(PaymentStatus.Completed));
+        });
+    }
+
     #region Private Methods
 
     private static List<Payments> CreatePaymentsTemplate()

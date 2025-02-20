@@ -133,7 +133,8 @@ public class SessionsRepositoryTests
                 MentorshipRequestId = Guid.NewGuid(),
                 SessionTime = DateTime.Now,
                 Duration = 30,
-                VideoLink = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                VideoLink = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                Amount = 139.99m
             },
             new()
             {
@@ -141,7 +142,8 @@ public class SessionsRepositoryTests
                 MentorshipRequestId = Guid.NewGuid(),
                 SessionTime = DateTime.Now,
                 Duration = 20,
-                VideoLink = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                VideoLink = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                Amount = 239.99m
             }
         };
     }
@@ -153,7 +155,8 @@ public class SessionsRepositoryTests
             Id = id,
             SessionTime = DateTime.Now.AddDays(3),
             Duration = 40,
-            VideoLink = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            VideoLink = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            Amount = 339.99m
         };
     }
 

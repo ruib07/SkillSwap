@@ -44,7 +44,8 @@ builder.Services.AddCors(options =>
         {
             builder.WithOrigins(ApiConstants.OriginReact)
                    .AllowAnyHeader()
-                   .AllowAnyMethod();
+                   .AllowAnyMethod()
+                   .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
         });
 });
 

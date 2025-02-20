@@ -4,12 +4,15 @@ import { showToast } from "../../utils/toastHelper";
 import { ISession } from "../../types/session";
 import { CreateSession } from "../../services/sessionsService";
 import Img from "/assets/SkillSwap-Logo.png";
+import { IPayment, PaymentsStatus } from "../../types/payment";
+import { SendPayment } from "../../services/paymentsService";
 
 export default function SessionCreation() {
-    const { mentorshipRequestId } = useParams();
+    const { mentorshipRequestId, learnerId, mentorId } = useParams();
     const [sessionTime, setSessionTime] = useState("");
     const [duration, setDuration] = useState(0);
     const [videoLink, setVideoLink] = useState("");
+    const [amount, setAmount] = useState("");
     const navigate = useNavigate();
 
     const handleSessionCreation = async (e: FormEvent) => {
@@ -20,11 +23,21 @@ export default function SessionCreation() {
             sessionTime,
             duration,
             videoLink,
+            amount: parseFloat(amount) || 0,
         };
 
+        const newPayment: IPayment = {
+            payerId: learnerId!,
+            mentorId: mentorId!,
+            amount: newSession.amount,
+            status: PaymentsStatus.Pending,
+        }
+
         try {
-            const res = await CreateSession(newSession);
-            const sessionId = res.data.id;
+            const sessionResponse = await CreateSession(newSession);
+            const sessionId = sessionResponse.data.id;
+            await SendPayment(newPayment);
+            
             showToast("Session created successfully!", "success");
             navigate(`/Session/${sessionId}`);
         } catch {
@@ -75,6 +88,24 @@ export default function SessionCreation() {
                                     placeholder="Video Link"
                                     value={videoLink}
                                     onChange={(e) => setVideoLink(e.target.value)}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block mb-2 text-sm font-medium text-gray-300">Amount *</label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    className="bg-gray-700 border border-gray-500 text-gray-400 rounded-lg block w-full p-2.5"
+                                    placeholder="Amount"
+                                    value={amount}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value === "" || parseFloat(value) >= 0) {
+                                            setAmount(value);
+                                        }
+                                    }}
                                 />
                             </div>
 

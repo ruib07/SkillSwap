@@ -16,6 +16,7 @@ public class SessionsConfig : IEntityTypeConfiguration<Sessions>
         builder.Property(p => p.SessionTime).IsRequired();
         builder.Property(p => p.Duration).IsRequired();
         builder.Property(p => p.VideoLink).HasMaxLength(255);
+        builder.Property(p => p.Amount).IsRequired().HasColumnType("decimal(10, 2)");
 
         builder.HasOne(p => p.MentorshipRequest)
                .WithMany()

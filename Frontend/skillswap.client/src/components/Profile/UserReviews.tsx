@@ -87,7 +87,11 @@ export default function UserReviews() {
                                                     >
                                                         {review.sessionId}
                                                     </h3>
-                                                    <p className="text-gray-400 text-sm">
+                                                    <div className="flex">
+                                                        <p className="text-gray-400 text-md">Rating: </p>
+                                                        <p className="ms-2 text-gray-300 text-md">{review.rating}</p>
+                                                    </div>
+                                                    <p className="text-gray-400 text-md">
                                                         {expandedComment === review.id
                                                             ? review.comments
                                                             : `${review.comments.substring(0, 120)}...`}

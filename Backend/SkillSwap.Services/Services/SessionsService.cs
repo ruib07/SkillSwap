@@ -44,6 +44,7 @@ public class SessionsService
         currentSession.SessionTime = updateSession.SessionTime;
         currentSession.Duration = updateSession.Duration;
         currentSession.VideoLink = updateSession.VideoLink;
+        currentSession.Amount = updateSession.Amount;
 
         await _sessionsRepository.UpdateSession(currentSession);
         return currentSession;

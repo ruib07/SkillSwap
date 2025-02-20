@@ -8,4 +8,5 @@ public interface IPaymentsRepository
     Task<List<Payments>> GetPaymentsByPayerId(Guid payerId);
     Task<List<Payments>> GetPaymentsByMentorId(Guid mentorId);
     Task<Payments> SendPayment(Payments payment);
+    Task<Payments> UpdatePaymentStatus(Guid id, PaymentStatus paymentStatus);
 }
